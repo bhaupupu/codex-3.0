@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { GameState, PlayerState } from '@/types/game';
 import { AppSocket } from '@/lib/socket';
@@ -53,11 +54,36 @@ function calcXp(player: PlayerState, winner: GameState['winner']): number {
   return 50 + player.tasksCompleted.length * 15 + (isWinner ? 100 : 0);
 }
 
+const IDLE_TIMEOUT_MS = 60000;
+
 export function GameOverScreen({ game, myUserId, myRole: _myRole, socket, onPlayAgain }: Props) {
+  const router = useRouter();
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!game.winner) return;
+
+    const resetTimer = () => {
+      if (idleTimer.current) clearTimeout(idleTimer.current);
+      idleTimer.current = setTimeout(() => {
+        router.push('/lobby');
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'touchstart'] as const;
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+      if (idleTimer.current) clearTimeout(idleTimer.current);
+    };
+  }, [game.winner, router]);
+
   // If winner hasn't arrived yet, show a brief waiting state
   if (!game.winner) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.92)' }}>
+      <div className="fixed inset-0 z-[70] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.92)' }}>
         <span className="pixel-font" style={{ fontSize: 10, color: 'var(--text-muted)' }}>GAME OVER...</span>
       </div>
     );
@@ -71,15 +97,21 @@ export function GameOverScreen({ game, myUserId, myRole: _myRole, socket, onPlay
   const myXp = myPlayer ? calcXp(myPlayer, winner) : 0;
 
   const handlePlayAgain = () => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
     socket?.emit('room:reset', { roomCode: game.roomCode });
     onPlayAgain();
+  };
+
+  const handleMainMenu = () => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    router.push('/lobby');
   };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-[70] flex flex-col items-center justify-center p-4 overflow-y-auto"
       style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(6px)' }}
     >
       {/* Winner banner */}
@@ -197,7 +229,7 @@ export function GameOverScreen({ game, myUserId, myRole: _myRole, socket, onPlay
           ▶  RETURN TO LOBBY
         </button>
         <button
-          onClick={() => { window.location.href = '/lobby'; }}
+          onClick={handleMainMenu}
           className="pixel-btn pixel-btn-light w-full py-3"
           style={{ fontSize: '10px' }}
         >
