@@ -61,8 +61,9 @@ export function registerRoomHandlers(io: Server, socket: AuthenticatedSocket): v
     if (!game || game.phase !== 'waiting') return;
     const isAdmin = game.players[0]?.userId === socket.userId;
     if (!isAdmin) return;
-    gameService.updateGameSettings(roomCode, settings);
-    io.to(roomCode).emit('room:settings-updated', { settings: game.settings });
+    const updated = gameService.updateGameSettings(roomCode, settings);
+    if (!updated) return;
+    io.to(roomCode).emit('room:settings-updated', { settings: updated });
   });
 
   // Admin force-start: first player (admin) can start regardless of ready state
@@ -120,9 +121,20 @@ function launchGame(io: Server, roomCode: string): void {
   setTimeout(() => {
     gameService.setGamePhase(roomCode, 'in-progress');
     const currentGame = gameService.getLiveGame(roomCode);
+    const gameObj = currentGame ? currentGame.toObject() : undefined;
+    // Ensure settings reflect in-memory values (bypasses Mongoose subdocument serialization quirks)
+    if (gameObj && currentGame) {
+      gameObj.settings = {
+        imposterCount: currentGame.settings.imposterCount,
+        tasksPerPlayer: currentGame.settings.tasksPerPlayer,
+        impostorCooldownMs: currentGame.settings.impostorCooldownMs,
+        discussionTimeMs: currentGame.settings.discussionTimeMs,
+        votingTimeMs: currentGame.settings.votingTimeMs,
+      };
+    }
     io.to(roomCode).emit('game:phase-change', {
       phase: 'in-progress',
-      game: currentGame ? currentGame.toObject() : undefined,
+      game: gameObj,
     });
     startGameTimer(io, roomCode);
   }, 3000);
