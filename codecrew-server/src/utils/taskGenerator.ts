@@ -3341,7 +3341,7 @@ const TEMPLATE_TEST_CASES: Map<string, MainTestCase[]> = new Map([
     { id: 'js_inv_4', description: 'getLowStockAlerts: Threshold is stock < 10', pattern: /p\.stock\s*<\s*10/ },
     { id: 'js_inv_5', description: 'addReview: avgRating uses correct divisor', pattern: /reviews\.length(?!\s*-\s*1)/ },
     { id: 'js_inv_6', description: 'restockProduct: Increments product.stock (not sold)', pattern: /product\.stock\s*\+=/ },
-    { id: 'js_inv_7', description: 'checkout: Function implemented with orderId', pattern: /function checkout[\s\S]*?orderId\s*[:=]/ },
+    { id: 'js_inv_7', description: 'checkout: Function implemented with orderId', pattern: /function checkout[\s\S]*?\borderId\b/ },
   ]],
   [JS_SOCIAL_CODE, [
     { id: 'js_soc_1', description: 'followUser: Prevents duplicate follows', pattern: /includes\s*\(\s*targetId\s*\)|\.has\s*\(\s*targetId\s*\)/ },
@@ -3352,7 +3352,7 @@ const TEMPLATE_TEST_CASES: Map<string, MainTestCase[]> = new Map([
     { id: 'js_soc_6', description: 'getStats: avgLikesPerPost uses correct divisor', pattern: /posts\.length(?!\s*-\s*1)/ },
   ]],
   [JS_EVENTS_CODE, [
-    { id: 'js_evt_1', description: 'registerForEvent: Capacity check before enrolling', pattern: /capacity|maxCapacity|maxAttendees/ },
+    { id: 'js_evt_1', description: 'registerForEvent: Capacity check before enrolling', pattern: /attendees\.length\s*[<>]=?\s*[a-zA-Z_$][\w.$]*capacity|capacity\s*[<>]=?\s*[a-zA-Z_$][\w.$]*attendees\.length/ },
     { id: 'js_evt_2', description: 'getUpcomingEvents: Excludes cancelled events', pattern: /!.*isCancelled|isCancelled.*!/ },
     { id: 'js_evt_3', description: 'getEventDuration: Duration clamped to 0 minimum', pattern: /Math\.max\s*\(\s*0/ },
     { id: 'js_evt_4', description: 'getMostPopularEvents: Sorts by fill percentage', pattern: /attendees\.length\s*\/.*capacity|\/\s*capacity/ },
@@ -3438,27 +3438,85 @@ const TEMPLATE_TEST_CASES: Map<string, MainTestCase[]> = new Map([
     { id: 'cpp_fs_3', description: 'getDirSize: Recursively sums subdirectory sizes', pattern: /getDirSize\s*\(|recursive|getSize\s*\(/ },
   ]],
   [CPP_NETWORK_CODE, [
-    { id: 'cpp_net_1', description: 'Connection: Tracks byte counts correctly', pattern: /bytesReceived\s*\+=|bytesSent\s*\+=/ },
-    { id: 'cpp_net_2', description: 'Server: Handles connection errors', pattern: /catch|error.*conn|conn.*error/ },
+    { id: 'cpp_net_1', description: 'addEdge: Undirected edge preserves weight', pattern: /adj\[to\]\.push_back\s*\(\s*\{\s*from\s*,\s*weight\s*\}/ },
+    { id: 'cpp_net_2', description: 'bfs: Reverses path before returning', pattern: /vector<string>\s+bfs[\s\S]*?reverse\s*\(\s*path/ },
+    { id: 'cpp_net_3', description: 'dijkstra: Early termination when end reached', pattern: /dijkstra[\s\S]*?if\s*\(\s*cur\s*==\s*end\s*\)/ },
+    { id: 'cpp_net_4', description: 'hasCycle: Checks unvisited before recursing', pattern: /hasCycle[\s\S]*?!\s*visited\.count\s*\(\s*e\.to\s*\)/ },
+    { id: 'cpp_net_5', description: 'topoSort: Implements Kahn\'s algorithm', pattern: /topoSort[\s\S]*?(?:queue<|in_degree|inDegree|indegree)/ },
+    { id: 'cpp_net_6', description: 'connectedComponents: Increments count after dfs', pattern: /dfs\s*\(\s*n\s*\)\s*;\s*count\s*\+\+/ },
   ]],
   [CPP_STRINGPARSER_CODE, [
-    { id: 'cpp_str_1', description: 'Parser: Handles edge cases', pattern: /empty\s*\(\s*\)|\.size\s*\(\s*\)\s*==\s*0/ },
-    { id: 'cpp_str_2', description: 'tokenize: Splits correctly on delimiter', pattern: /delimiter|delim|split/ },
+    { id: 'cpp_str_1', description: 'precedence: ^ returns 3 (highest)', pattern: /op\s*==\s*"\^"\s*\)\s*return\s+3/ },
+    { id: 'cpp_str_2', description: 'evalRPN: Division computes a / b (not b / a)', pattern: /s\.push\s*\(\s*a\s*\/\s*b\s*\)/ },
+    { id: 'cpp_str_3', description: 'split: Pushes token (not original string)', pattern: /result\.push_back\s*\(\s*token\s*\)/ },
+    { id: 'cpp_str_4', description: 'replace_all: Advances pos to avoid infinite loop', pattern: /pos\s*\+=\s*to\.(size|length)\s*\(\s*\)/ },
+    { id: 'cpp_str_5', description: 'trim: Strips leading/trailing whitespace', pattern: /trim[\s\S]*?(?:isspace|find_first_not_of|find_last_not_of)/ },
   ]],
   [CPP_MEMORYPOOL_CODE, [
-    { id: 'cpp_mem_1', description: 'MemoryPool: Tracks free blocks correctly', pattern: /freeBlocks\s*\(\s*\)|free.*blocks/ },
-    { id: 'cpp_mem_2', description: 'SharedPtr: Reference count increments on copy', pattern: /refCount\s*\+\+|\+\+.*refCount|useCount/ },
+    { id: 'cpp_mem_1', description: 'freeBlocks: Returns capacity - allocated', pattern: /return\s+capacity\s*-\s*allocated/ },
+    { id: 'cpp_mem_2', description: 'SharedPtr copy ctor: Increments refCount', pattern: /SharedPtr\s*\(\s*const\s+SharedPtr[^)]*\)\s*:[^{]*\{[^}]*\(\s*\*\s*refCount\s*\)\s*\+\+/ },
+    { id: 'cpp_mem_3', description: 'LRUCache::get: Updates lastUsed on access', pattern: /bool\s+get\s*\([\s\S]*?it->second\.lastUsed\s*=\s*clock/ },
+    { id: 'cpp_mem_4', description: 'LRUCache::evict: Removes least-recently-used', pattern: /void\s+evict[\s\S]*?lastUsed\s*<\s*oldest->second\.lastUsed/ },
   ]],
 ]);
 
-// Pick a random code template; for larger groups concatenate two modules for ~2x lines
-export function getMainCodeTemplate(language: string, playerCount: number = 4): { code: string; testCases: MainTestCase[] } {
-  const templates = CODE_TEMPLATES[language as Language] ?? CODE_TEMPLATES.javascript;
-  const shuffled = [...templates].sort(() => Math.random() - 0.5);
-  const primary = shuffled[0];
+// Stable keys → template code. Used to persist the chosen template across server restarts
+// so that test patterns reloaded from DB match the same IDs as the saved mainTestCases.
+export const TEMPLATE_KEYS: Record<string, string> = {
+  js_main: JS_MAIN_CODE,
+  js_social: JS_SOCIAL_CODE,
+  js_events: JS_EVENTS_CODE,
+  js_ecommerce: JS_ECOMMERCE_CODE,
+  js_taskmanager: JS_TASKMANAGER_CODE,
+  js_chatapp: JS_CHATAPP_CODE,
+  js_rpggame: JS_RPGGAME_CODE,
+  py_main: PYTHON_MAIN_CODE,
+  py_library: PYTHON_LIBRARY_CODE,
+  py_weather: PYTHON_WEATHER_CODE,
+  py_social: PYTHON_SOCIAL_CODE,
+  py_scheduler: PYTHON_SCHEDULER_CODE,
+  py_dataprocessor: PYTHON_DATAPROCESSOR_CODE,
+  cpp_main: CPP_MAIN_CODE,
+  cpp_grades: CPP_GRADES_CODE,
+  cpp_filesystem: CPP_FILESYSTEM_CODE,
+  cpp_network: CPP_NETWORK_CODE,
+  cpp_stringparser: CPP_STRINGPARSER_CODE,
+  cpp_memorypool: CPP_MEMORYPOOL_CODE,
+};
 
-  if (playerCount >= 6 && shuffled.length >= 2) {
-    const secondary = shuffled[1];
+const CODE_TO_KEY = new Map<string, string>(
+  Object.entries(TEMPLATE_KEYS).map(([k, v]) => [v, k])
+);
+
+// Pick a random code template; for larger groups concatenate two modules for ~2x lines.
+// If primaryKey (and optionally secondaryKey) are supplied, use them instead of random selection —
+// this is how `getOrLoadGame` repopulates test patterns after a server restart.
+export function getMainCodeTemplate(
+  language: string,
+  playerCount: number = 4,
+  opts?: { primaryKey?: string; secondaryKey?: string | null }
+): { code: string; testCases: MainTestCase[]; primaryKey: string; secondaryKey: string | null } {
+  const templates = CODE_TEMPLATES[language as Language] ?? CODE_TEMPLATES.javascript;
+
+  const primary = opts?.primaryKey && TEMPLATE_KEYS[opts.primaryKey]
+    ? TEMPLATE_KEYS[opts.primaryKey]
+    : [...templates].sort(() => Math.random() - 0.5)[0];
+  const primaryKey = CODE_TO_KEY.get(primary) ?? '';
+
+  const shouldCombine = playerCount >= 6 && templates.length >= 2;
+  let secondary: string | null = null;
+
+  if (opts?.secondaryKey && TEMPLATE_KEYS[opts.secondaryKey]) {
+    secondary = TEMPLATE_KEYS[opts.secondaryKey];
+  } else if (shouldCombine && !opts?.primaryKey) {
+    // Only auto-pick secondary on fresh start (not on reload with only primaryKey)
+    const others = templates.filter(t => t !== primary).sort(() => Math.random() - 0.5);
+    secondary = others[0] ?? null;
+  }
+
+  const secondaryKey = secondary ? (CODE_TO_KEY.get(secondary) ?? null) : null;
+
+  if (secondary) {
     const sep = language === 'python'
       ? '\n\n# ============================================================\n#  MODULE 2 — Additional Challenges Below!\n# ============================================================\n\n'
       : '\n\n// ============================================================\n//  MODULE 2 — Additional Challenges Below!\n// ============================================================\n\n';
@@ -3466,10 +3524,10 @@ export function getMainCodeTemplate(language: string, playerCount: number = 4): 
       ...(TEMPLATE_TEST_CASES.get(primary) ?? []),
       ...(TEMPLATE_TEST_CASES.get(secondary) ?? []),
     ];
-    return { code: primary + sep + secondary, testCases: combinedTestCases };
+    return { code: primary + sep + secondary, testCases: combinedTestCases, primaryKey, secondaryKey };
   }
 
-  return { code: primary, testCases: TEMPLATE_TEST_CASES.get(primary) ?? [] };
+  return { code: primary, testCases: TEMPLATE_TEST_CASES.get(primary) ?? [], primaryKey, secondaryKey: null };
 }
 
 // 50% easy · 30% medium · 20% hard (normalized to allowed difficulties per skill level)
