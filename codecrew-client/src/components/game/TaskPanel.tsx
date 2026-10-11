@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { AppSocket } from '@/lib/socket';
 
-const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
+const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1e1e1e', color: '#555', fontSize: 12, fontFamily: 'monospace' }}>
+      Loading editor…
+    </div>
+  ),
+});
 
 interface Props {
   tasks: Task[];
@@ -147,13 +154,17 @@ export function TaskPanel({ tasks, myUserId, socket, roomCode, language = 'javas
               </div>
 
               {/* Monaco editor */}
-              <div className="flex-1 min-h-0" style={{ height: '350px' }}>
+              <div style={{ height: '350px', flexShrink: 0 }}>
                 <MonacoEditor
-                  height="100%"
+                  height="350px"
                   language={language}
                   value={code}
                   onChange={(val) => setCode(val ?? '')}
                   theme="vs-dark"
+                  onMount={(editor) => {
+                    setTimeout(() => editor.layout(), 150);
+                    editor.focus();
+                  }}
                   options={{
                     fontSize: 13,
                     minimap: { enabled: false },
