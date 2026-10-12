@@ -30,5 +30,5 @@ export const AUTHOR = {
 // shipping placeholder/dead social links is a trust signal Google penalises.
 export const SOCIAL: { label: string; href: string }[] = [];
 
-// Contact route used wherever we previously linked to a (non-existent) Discord/GitHub.
-export const CONTACT_URL = '/contact';
+// Contact route fallback pointing to About page.
+export const CONTACT_URL = '/about';

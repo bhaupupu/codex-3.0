@@ -5,7 +5,6 @@ import WhatIsSection from './WhatIsSection';
 import HowItWorksSection from './HowItWorksSection';
 import LiveDemoSection from './LiveDemoSection';
 import RoleDossiersSection from './RoleDossiersSection';
-import BlogSection from './BlogSection';
 import FAQSection from './FAQSection';
 import FinalCTASection from './FinalCTASection';
 import Footer from './Footer';
@@ -20,7 +19,6 @@ export default function LandingPage() {
       <HowItWorksSection />
       <LiveDemoSection />
       <RoleDossiersSection />
-      <BlogSection />
       <FAQSection />
       <FinalCTASection />
       <Footer />

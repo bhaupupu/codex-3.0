@@ -170,7 +170,7 @@ export default function CookiePolicyPage() {
       <p>
         If you have questions about our use of cookies, please contact us at{' '}
         <a href="mailto:guptadiwanshu2007@gmail.com">guptadiwanshu2007@gmail.com</a> or visit our{' '}
-        <a href="/contact">contact page</a>.
+        <a href="/about">About page</a>.
       </p>
     </LegalPageLayout>
   );

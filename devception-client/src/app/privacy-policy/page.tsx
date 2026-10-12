@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
       </p>
       <ul>
         <li><strong>Email:</strong> <a href="mailto:guptadiwanshu2007@gmail.com">guptadiwanshu2007@gmail.com</a></li>
-        <li><strong>Website:</strong> <a href="/contact">devception.xyz/contact</a></li>
+        <li><strong>Website:</strong> <a href="/about">About page</a></li>
       </ul>
     </LegalPageLayout>
   );

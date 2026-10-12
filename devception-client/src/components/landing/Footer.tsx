@@ -8,8 +8,6 @@ const FOOTER_LINKS: Record<string, { label: string; href: string }[]> = {
   PRODUCT: [
     { label: 'About', href: '/about' },
     { label: 'How To Play', href: '/#how-it-works' },
-    { label: 'Blog', href: '/blog' },
-    { label: 'Contact', href: '/contact' },
   ],
   LEGAL: [
     { label: 'Privacy Policy', href: '/privacy-policy' },
@@ -99,7 +97,7 @@ export default function Footer() {
 
               {/* Real contact link only — placeholder social links removed */}
               <Link
-                href="/contact"
+                href="/about"
                 style={{
                   fontFamily: "'Press Start 2P', monospace",
                   fontSize: 7,
@@ -111,7 +109,7 @@ export default function Footer() {
                   display: 'inline-block',
                 }}
               >
-                CONTACT US
+                ABOUT GAME
               </Link>
             </div>
 

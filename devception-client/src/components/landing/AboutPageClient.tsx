@@ -3,54 +3,45 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { useCinematic } from './CinematicProvider';
-import { AUTHOR } from '@/lib/site';
 
-const VALUES = [
+const FEATURES = [
   {
-    icon: '🤝',
-    title: 'COLLABORATION OVER ISOLATION',
-    body: 'Coding was never meant to be a solo sport. The best software is built by teams who communicate, review each other\'s work, and challenge each other\'s assumptions. We built Devception to celebrate that truth.',
+    icon: '💻',
+    title: 'REAL-TIME COLLABORATIVE EDITOR',
+    body: 'Powered by Monaco Editor and Yjs CRDTs, multiple players write and edit code in the exact same file simultaneously with live multi-cursor synchronization and zero merge conflicts.',
     color: '#2563eb',
   },
   {
-    icon: '🎮',
-    title: 'LEARNING THROUGH PLAY',
-    body: 'The best lessons don\'t feel like lessons. When you\'re trying to catch an imposter mid-match, you\'re also practicing code review, critical thinking, and communication under pressure — without even realising it.',
-    color: '#16a34a',
-  },
-  {
-    icon: '🔍',
-    title: 'TRUST AND BEAUTIFUL BETRAYAL',
-    body: 'Trust is the foundation of great teams. And understanding how trust breaks down — through deception, through subtle sabotage — teaches you to build more resilient systems, better communication habits, and sharper instincts.',
+    icon: '🕵️',
+    title: 'HIDDEN IMPOSTOR SABOTAGE',
+    body: 'Impostors receive covert sabotage abilities: inject sneaky syntax or logic bugs, trigger temporary screen blurs on teammates, send deceptive hints, and discreetly sabotage tests without blowing their cover.',
     color: '#dc2626',
   },
-];
-
-const TEAM = [
   {
-    avatar: '👨‍💻',
-    name: AUTHOR.name,
-    title: AUTHOR.role,
-    bio: AUTHOR.bio,
-    color: '#2563eb',
+    icon: '🚨',
+    title: 'EMERGENCY MEETINGS & VOTING',
+    body: 'When broken tests or suspicious code edits arise, any player can slam the Emergency Meeting button to halt the editor, open a real-time discussion chat, debate the evidence, and vote to eliminate suspects.',
+    color: '#d97706',
   },
   {
-    avatar: '👨‍💻',
-    name: 'Pratham Sharma',
-    title: 'Founder',
-    bio: 'Pratham Sharma is a founder of Devception and played a key role in shaping the vision behind the project. From early ideation to refining the gameplay experience, he helped transform a simple classroom idea into a collaborative coding game for developers.',
+    icon: '⚡',
+    title: 'AUTOMATED CODE RUNNER',
+    body: 'An isolated backend sandbox executes test suites against the team’s code in real-time, verifying whether the solution meets 100% passing tests before the countdown clock runs out.',
     color: '#16a34a',
   },
+  {
+    icon: '👥',
+    title: 'CUSTOM MULTIPLAYER LOBBIES',
+    body: 'Host public or private rooms for 4–8 players with custom match duration, meeting discussion and voting timers, sabotage cooldowns, and instant room code sharing with teammates.',
+    color: '#7c3aed',
+  },
+  {
+    icon: '🎯',
+    title: 'TWO DISTINCT ROLES',
+    body: 'Developers strive for flawless code completion and bug fixes. Impostors win by stalling progress until the timer expires or deceiving developers into ejecting innocent teammates.',
+    color: '#0284c7',
+  },
 ];
-
-// Shared body-paragraph style for the origin story (kept DRY + consistent rhythm).
-const STORY_PARAGRAPH: React.CSSProperties = {
-  fontFamily: "'Space Mono', monospace",
-  fontSize: 15,
-  color: '#44403c',
-  lineHeight: 1.85,
-  margin: '0 0 20px',
-};
 
 export default function AboutPageClient() {
   const { triggerCinematic } = useCinematic();
@@ -63,213 +54,86 @@ export default function AboutPageClient() {
     <div style={{ background: '#f0ece2', minHeight: '100vh' }}>
       <Navbar />
 
-      {/* ─── Hero ─── */}
+      {/* ─── Hero: What is Devception ─── */}
       <section
         className="pixel-bg"
         style={{
           paddingTop: 120,
-          paddingBottom: 80,
+          paddingBottom: 70,
           textAlign: 'center',
           borderBottom: '3px solid rgba(28,25,23,0.1)',
         }}
       >
-        <div className="section-container">
-          <div className="section-label">▶ ABOUT DEVCEPTION</div>
+        <div className="section-container" style={{ maxWidth: 840 }}>
+          <div className="section-label">▶ OVERVIEW</div>
           <h1
             style={{
               fontFamily: "'Press Start 2P', monospace",
-              fontSize: 'clamp(16px, 2.5vw, 28px)',
+              fontSize: 'clamp(18px, 2.8vw, 30px)',
               color: '#1c1917',
-              lineHeight: 1.6,
-              marginBottom: 20,
-              maxWidth: 800,
-              margin: '0 auto 20px',
+              lineHeight: 1.5,
+              marginBottom: 24,
             }}
           >
-            THE STORY BEHIND THE GAME
+            WHAT IS DEVCEPTION?
           </h1>
           <p
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: 16,
+              fontSize: 'clamp(15px, 1.8vw, 17px)',
               color: '#44403c',
-              maxWidth: 600,
-              margin: '0 auto',
-              lineHeight: 1.8,
+              lineHeight: 1.9,
+              maxWidth: 760,
+              margin: '0 auto 32px',
             }}
           >
-            A game born from boredom, a Discord message, and a better idea for how developers
-            should practice their craft.
+            <strong>Devception</strong> is an online multiplayer social deduction coding game built for developers. 
+            It merges the fast-paced suspicion of social deception games like <em>Among Us</em> with the technical 
+            excitement of real-time collaborative programming.
           </p>
+
+          <div
+            className="game-panel"
+            style={{
+              padding: 'clamp(20px, 4vw, 32px)',
+              textAlign: 'left',
+              borderLeft: '4px solid #2563eb',
+              background: '#ffffff',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: 14,
+                color: '#1c1917',
+                lineHeight: 1.8,
+                margin: 0,
+              }}
+            >
+              4 to 8 players join a shared lobby and write code together in a single collaborative editor.
+              While honest developers race against the clock to complete programming tasks and pass automated unit tests,
+              secretly assigned Impostors work in the shadows to introduce subtle bugs, sabotage editor focus, and mislead the team.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* ─── Origin Story ─── */}
-      <section style={{ padding: 'clamp(56px, 9vw, 80px) 0' }}>
-        <div className="section-container">
-          {/* Readable measure column (~68 chars/line), centred within the page container */}
-          <div
-            style={{
-              maxWidth: '68ch',
-              margin: '0 auto',
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 15,
-            }}
-          >
-            <div className="section-label">// THE ORIGIN</div>
+      {/* ─── What Does It Do ─── */}
+      <section style={{ padding: 'clamp(60px, 8vw, 84px) 0' }}>
+        <div className="section-container" style={{ maxWidth: 960 }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div className="section-label">⚙ MECHANICS & FEATURES</div>
             <h2
               style={{
                 fontFamily: "'Press Start 2P', monospace",
-                fontSize: 'clamp(13px, 1.8vw, 20px)',
+                fontSize: 'clamp(14px, 2vw, 22px)',
                 color: '#1c1917',
                 lineHeight: 1.6,
-                margin: '0 0 28px',
               }}
             >
-              IT STARTED IN AN ALGORITHMS LECTURE
+              WHAT DOES DEVCEPTION DO?
             </h2>
-
-            <blockquote
-              className="game-panel"
-              style={{
-                padding: 'clamp(20px, 4vw, 36px)',
-                margin: '0 0 32px',
-                borderLeft: '4px solid #2563eb',
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: 'clamp(15px, 2.2vw, 17px)',
-                  color: '#1c1917',
-                  lineHeight: 1.7,
-                  fontStyle: 'italic',
-                  margin: 0,
-                }}
-              >
-                &ldquo;What if the tasks were actual code?&rdquo;
-              </p>
-            </blockquote>
-
-            <p style={STORY_PARAGRAPH}>
-              It started in an algorithms lecture. A couple of bored computer science students
-              stumbled onto a thread about Among Us, and within minutes one message kicked the whole
-              thing off: <em>&ldquo;what if the tasks were actual code?&rdquo;</em>
-            </p>
-            <p style={STORY_PARAGRAPH}>
-              That was the whole idea. Simple. Obvious in retrospect. And somehow nobody had done it yet.
-            </p>
-            <p style={STORY_PARAGRAPH}>
-              We spent the rest of that lecture sketching out how it would work: a shared code editor that
-              everyone could see and edit simultaneously. One or two hidden imposters whose job was to
-              introduce subtle bugs without being caught. An emergency meeting mechanic for calling out
-              suspicious behaviour. A voting system to eliminate the suspected imposter.
-            </p>
-            <p style={STORY_PARAGRAPH}>
-              We went home and built the first prototype over a weekend using plain WebSockets and a
-              {' '}<code style={{ background: '#e4dfd3', padding: '2px 6px', fontFamily: 'monospace' }}>textarea</code>.
-              It was terrible. It crashed constantly, had no authentication, and the code synchronisation
-              was basically just &ldquo;last write wins&rdquo; — which caused complete chaos. But when
-              we got four of our friends to play it over Discord, something magical happened: everyone was
-              laughing, accusing each other, typing furiously, and having the time of their lives.
-            </p>
-            <p style={{ ...STORY_PARAGRAPH, margin: 0 }}>
-              We knew we had something.
-            </p>
           </div>
-        </div>
-      </section>
-
-      {/* ─── The Build ─── */}
-      <section
-        style={{
-          padding: '80px 0',
-          background: '#faf8f4',
-          borderTop: '2px solid rgba(28,25,23,0.1)',
-          borderBottom: '2px solid rgba(28,25,23,0.1)',
-        }}
-      >
-        <div className="section-container" style={{ maxWidth: 900 }}>
-          <div className="section-label">⚙ THE BUILD</div>
-          <h2
-            style={{
-              fontFamily: "'Press Start 2P', monospace",
-              fontSize: 'clamp(13px, 1.8vw, 20px)',
-              color: '#1c1917',
-              lineHeight: 1.6,
-              marginBottom: 32,
-            }}
-          >
-            HOW WE BUILT IT
-          </h2>
-          <p
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 14,
-              color: '#44403c',
-              lineHeight: 1.9,
-              marginBottom: 20,
-            }}
-          >
-            The real version took months. We rebuilt everything from scratch — Next.js 14 for the
-            frontend (the App Router made server components and routing elegant), Express with Socket.IO
-            for real-time multiplayer (Socket.IO&apos;s room abstraction saved us weeks of work),
-            MongoDB for game state persistence, and Y.js CRDTs for conflict-free code editor
-            synchronisation across multiple simultaneous writers.
-          </p>
-          <p
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: 14,
-              color: '#44403c',
-              lineHeight: 1.9,
-              marginBottom: 32,
-            }}
-          >
-            The hardest problem was the shared code editor. When 4–8 people type simultaneously, you
-            need an algorithm that merges their changes without losing anyone&apos;s work and without
-            producing nonsense. We stayed up until 3am more times than we can count. We shipped features
-            during study breaks. We tested it with friends and small groups of fellow students —
-            anyone who would sit down and play a round with us.
-          </p>
-
-          {/* Tech stack badges */}
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            {['Next.js 14', 'Socket.IO', 'MongoDB', 'Y.js', 'TypeScript', 'NextAuth', 'Express'].map((tech) => (
-              <span
-                key={tech}
-                style={{
-                  fontFamily: "'Press Start 2P', monospace",
-                  fontSize: 7,
-                  padding: '6px 12px',
-                  background: '#f0ece2',
-                  border: '2px solid #1c1917',
-                  boxShadow: '2px 2px 0 #1c1917',
-                  color: '#1c1917',
-                }}
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Values ─── */}
-      <section style={{ padding: '80px 0' }}>
-        <div className="section-container">
-          <div className="section-label">★ OUR VALUES</div>
-          <h2
-            style={{
-              fontFamily: "'Press Start 2P', monospace",
-              fontSize: 'clamp(13px, 1.8vw, 20px)',
-              color: '#1c1917',
-              lineHeight: 1.6,
-              marginBottom: 40,
-            }}
-          >
-            WHAT WE BELIEVE IN
-          </h2>
 
           <div
             style={{
@@ -278,27 +142,28 @@ export default function AboutPageClient() {
               gap: 24,
             }}
           >
-            {VALUES.map((v, i) => (
+            {FEATURES.map((feat, i) => (
               <div
                 key={i}
                 className="game-panel"
                 style={{
-                  padding: 28,
-                  borderColor: v.color,
-                  boxShadow: `4px 4px 0 ${v.color}`,
+                  padding: 26,
+                  borderColor: feat.color,
+                  boxShadow: `4px 4px 0 ${feat.color}`,
+                  background: '#ffffff',
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 16 }}>{v.icon}</div>
+                <div style={{ fontSize: 32, marginBottom: 14 }}>{feat.icon}</div>
                 <div
                   style={{
                     fontFamily: "'Press Start 2P', monospace",
                     fontSize: 9,
-                    color: v.color,
+                    color: feat.color,
                     lineHeight: 1.7,
                     marginBottom: 12,
                   }}
                 >
-                  {v.title}
+                  {feat.title}
                 </div>
                 <p
                   style={{
@@ -306,10 +171,10 @@ export default function AboutPageClient() {
                     fontSize: 12,
                     color: '#44403c',
                     lineHeight: 1.8,
-                    marginBottom: 0,
+                    margin: 0,
                   }}
                 >
-                  {v.body}
+                  {feat.body}
                 </p>
               </div>
             ))}
@@ -317,97 +182,17 @@ export default function AboutPageClient() {
         </div>
       </section>
 
-      {/* ─── Team ─── */}
+      {/* ─── How A Match Works ─── */}
       <section
         style={{
-          padding: '80px 0',
+          padding: '70px 0',
           background: '#faf8f4',
           borderTop: '2px solid rgba(28,25,23,0.1)',
           borderBottom: '2px solid rgba(28,25,23,0.1)',
         }}
       >
-        <div className="section-container">
-          <div className="section-label">👥 THE TEAM</div>
-          <h2
-            style={{
-              fontFamily: "'Press Start 2P', monospace",
-              fontSize: 'clamp(13px, 1.8vw, 20px)',
-              color: '#1c1917',
-              lineHeight: 1.6,
-              marginBottom: 40,
-            }}
-          >
-            WHO BUILT THIS
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: 24,
-              maxWidth: 800,
-            }}
-          >
-            {TEAM.map((member, i) => (
-              <div key={i} className="game-panel" style={{ padding: 28 }}>
-                <div
-                  style={{
-                    width: 60,
-                    height: 60,
-                    border: `3px solid ${member.color}`,
-                    boxShadow: `3px 3px 0 ${member.color}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 28,
-                    marginBottom: 16,
-                    background: '#f0ece2',
-                  }}
-                >
-                  {member.avatar}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 9,
-                    color: '#1c1917',
-                    marginBottom: 6,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {member.name}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace",
-                    fontSize: 7,
-                    color: member.color,
-                    marginBottom: 14,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {member.title}
-                </div>
-                <p
-                  style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 12,
-                    color: '#44403c',
-                    lineHeight: 1.8,
-                    marginBottom: 0,
-                  }}
-                >
-                  {member.bio}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Vision ─── */}
-      <section style={{ padding: '80px 0' }}>
-        <div className="section-container" style={{ maxWidth: 800, textAlign: 'center' }}>
-          <div className="section-label">🚀 OUR VISION</div>
+        <div className="section-container" style={{ maxWidth: 840 }}>
+          <div className="section-label">🎮 GAMEPLAY LOOP</div>
           <h2
             style={{
               fontFamily: "'Press Start 2P', monospace",
@@ -417,54 +202,125 @@ export default function AboutPageClient() {
               marginBottom: 32,
             }}
           >
-            WHERE WE&apos;RE GOING
+            HOW A MATCH PLAYS OUT
           </h2>
-          <div className="game-panel" style={{ padding: 40, marginBottom: 40, textAlign: 'left' }}>
-            <p
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 15,
-                color: '#44403c',
-                lineHeight: 1.9,
-                marginBottom: 20,
-              }}
-            >
-              We want Devception to become the place where developers come to practise coding with
-              each other — not against a judge, not alone, but in a real team with real stakes.
-            </p>
-            <p
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 15,
-                color: '#44403c',
-                lineHeight: 1.9,
-                marginBottom: 20,
-              }}
-            >
-              We want it to be used in universities, bootcamps, hackathons, and team-building events.
-              We want the imposter mechanic to teach people to read code critically, communicate under
-              pressure, and trust their instincts.
-            </p>
-            <p
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 15,
-                color: '#44403c',
-                lineHeight: 1.9,
-                fontStyle: 'italic',
-                marginBottom: 0,
-              }}
-            >
-              &ldquo;And honestly? We just want people to have fun.&rdquo;
-            </p>
-          </div>
 
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-            <button onClick={handlePlayNow} className="pixel-btn pixel-btn-blue" style={{ fontSize: 10, textDecoration: 'none' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {[
+              {
+                step: '01',
+                title: 'ROLE ASSIGNMENT',
+                desc: 'Players enter the lobby and receive secret role cards: Developer or Impostor. Only Impostors know each other’s identities.',
+              },
+              {
+                step: '02',
+                title: 'COLLABORATIVE SPRINT',
+                desc: 'The game clock starts. Players work on the coding challenge in Monaco editor. Developers write logic and tests; Impostors covertly trigger bugs and cooldown sabotages.',
+              },
+              {
+                step: '03',
+                title: 'EMERGENCY MEETING',
+                desc: 'Anyone can call an Emergency Meeting. The code editor freezes, test results are audited, and players engage in real-time text debates to accuse suspects.',
+              },
+              {
+                step: '04',
+                title: 'VOTING & RESOLUTION',
+                desc: 'Players cast secret ballots. The player with the most votes is eliminated. Developers win by passing all tests or ejecting all Impostors; Impostors win if the timer expires.',
+              },
+            ].map((s) => (
+              <div
+                key={s.step}
+                className="game-panel"
+                style={{
+                  padding: '20px 24px',
+                  display: 'flex',
+                  gap: 20,
+                  alignItems: 'flex-start',
+                  background: '#ffffff',
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: 12,
+                    color: '#2563eb',
+                    background: '#e0edff',
+                    padding: '8px 10px',
+                    border: '2px solid #2563eb',
+                    flexShrink: 0,
+                  }}
+                >
+                  {s.step}
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "'Press Start 2P', monospace",
+                      fontSize: 9,
+                      color: '#1c1917',
+                      marginBottom: 8,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {s.title}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: 13,
+                      color: '#57534e',
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {s.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Ready to Play ─── */}
+      <section style={{ padding: '80px 0', textAlign: 'center' }}>
+        <div className="section-container" style={{ maxWidth: 700 }}>
+          <h2
+            style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 'clamp(14px, 2vw, 22px)',
+              color: '#1c1917',
+              lineHeight: 1.6,
+              marginBottom: 24,
+            }}
+          >
+            READY TO JOIN A LOBBY?
+          </h2>
+          <p
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: 14,
+              color: '#57534e',
+              lineHeight: 1.8,
+              marginBottom: 32,
+            }}
+          >
+            Create a private room with friends or join a public match and test your coding and deduction skills.
+          </p>
+
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={handlePlayNow}
+              className="pixel-btn pixel-btn-blue"
+              style={{ fontSize: 10, cursor: 'pointer' }}
+            >
               ▶ PLAY NOW
             </button>
-            <a href="/blog" className="pixel-btn pixel-btn-light" style={{ fontSize: 10, textDecoration: 'none' }}>
-              READ THE BLOG
+            <a
+              href="/#how-it-works"
+              className="pixel-btn pixel-btn-light"
+              style={{ fontSize: 10, textDecoration: 'none' }}
+            >
+              HOW TO PLAY
             </a>
           </div>
         </div>
