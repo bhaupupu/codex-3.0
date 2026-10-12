@@ -6,9 +6,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/game/', '/lobby/', '/results/'],
+        // Block app/auth surfaces and the placeholder shop so crawlers only
+        // assess real, content-bearing pages (keeps thin pages out of review).
+        disallow: ['/api/', '/game/', '/lobby/', '/results/', '/play', '/profile', '/login', '/shop'],
       },
     ],
-    sitemap: 'https://devception.com/sitemap.xml',
+    sitemap: 'https://devception.xyz/sitemap.xml',
   };
 }
