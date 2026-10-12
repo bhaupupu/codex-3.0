@@ -10,32 +10,47 @@ const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL) : null;
 
 const roomDocs = new Map<string, Y.Doc>();
 
+// Tracks which rooms have had at least one genuine human edit since game start.
+// The judge is gated on this flag to prevent auto-passing test cases when the
+// server bootstraps clients (editor:request-state → client Y.Doc sync →
+// server receives the initial-state update, which is NOT a human edit).
+const codeEditedRooms = new Set<string>();
+
 export async function getOrCreateYDoc(roomCode: string, initialCode: string): Promise<Y.Doc> {
   if (!roomDocs.has(roomCode)) {
     const ydoc = new Y.Doc();
     const ytext = ydoc.getText('monaco');
-    
-    if (redis) {
-      try {
-        const buffer = await redis.getBuffer(`game:${roomCode}:ydoc`);
-        if (buffer) {
-          Y.applyUpdate(ydoc, new Uint8Array(buffer));
-          roomDocs.set(roomCode, ydoc);
-          return ydoc;
-        }
-      } catch (e) {
-        logger.error(`Failed to load Y.Doc from Redis for ${roomCode}`, e);
-      }
-    }
-
     ytext.insert(0, initialCode);
     roomDocs.set(roomCode, ydoc);
   }
   return roomDocs.get(roomCode)!;
 }
 
-export function clearYDoc(roomCode: string) {
-  roomDocs.delete(roomCode);
+// Encode the current Y.Doc state for a room as an ArrayBuffer suitable for
+// emitting via editor:ydoc-sync. Used by room.handler.ts to push the initial
+// template to all clients without importing the yjs namespace directly.
+export async function encodeRoomYDocState(roomCode: string, fallbackCode: string): Promise<ArrayBuffer> {
+  const ydoc = await getOrCreateYDoc(roomCode, fallbackCode);
+  const stateVector = Y.encodeStateAsUpdate(ydoc);
+  return stateVector.buffer as ArrayBuffer;
+}
+
+export async function clearYDoc(roomCode: string): Promise<void> {
+  const existing = roomDocs.get(roomCode);
+  if (existing) {
+    existing.destroy();
+    roomDocs.delete(roomCode);
+  }
+  // Clear the human-edit gate so the new game starts clean.
+  codeEditedRooms.delete(roomCode);
+  // Also purge the Redis snapshot so a new game never inherits stale Yjs state.
+  if (redis) {
+    try {
+      await redis.del(`game:${roomCode}:ydoc`);
+    } catch (e) {
+      logger.error(`Failed to delete Y.Doc from Redis for ${roomCode}`, e);
+    }
+  }
 }
 
 // Per-room debounce timers for test case checking.
@@ -96,6 +111,11 @@ export function registerEditorHandlers(io: Server, socket: AuthenticatedSocket):
       const uint8Update = new Uint8Array(update);
       Y.applyUpdate(ydoc, uint8Update, 'client');
 
+      // Mark that a real human has touched this room's code. The judge is
+      // gated on this flag — bootstrap syncs (editor:request-state responses)
+      // must not trigger evaluation against unmodified template code.
+      codeEditedRooms.add(roomCode);
+
       if (redis) {
         try {
           const stateVector = Y.encodeStateAsUpdate(ydoc);
@@ -112,8 +132,30 @@ export function registerEditorHandlers(io: Server, socket: AuthenticatedSocket):
       }
 
       socket.to(roomCode).emit('editor:ydoc-sync', { update });
-      
-      scheduleTestCaseCheck(io, roomCode);
+
+      // Only run the test-case judge if a real human edit has been received.
+      // This prevents auto-passing on game start when clients request initial state.
+      if (codeEditedRooms.has(roomCode)) {
+        scheduleTestCaseCheck(io, roomCode);
+      }
+    }
+  );
+
+  // Bootstrap a newly (re)connected client by sending the full server Y.Doc
+  // state vector. The client emits this once after creating its local Y.Doc so
+  // it receives the authoritative document without having to wait for a delta.
+  socket.on(
+    'editor:request-state',
+    async ({ roomCode }: { roomCode: string }) => {
+      const liveGame = gameService.getLiveGame(roomCode);
+      // Respond during role-reveal AND in-progress — both phases have a seeded Y.Doc.
+      // Returning early for role-reveal caused blank editors: the CodeEditor mounts
+      // during role-reveal, emits this once, gets dropped, and never retries because
+      // roomCode doesn't change when the phase transitions to in-progress.
+      if (!liveGame || (liveGame.phase !== 'in-progress' && liveGame.phase !== 'role-reveal')) return;
+      const ydoc = await getOrCreateYDoc(roomCode, liveGame.sharedCode || '');
+      const stateVector = Y.encodeStateAsUpdate(ydoc);
+      socket.emit('editor:ydoc-sync', { update: stateVector.buffer as ArrayBuffer });
     }
   );
 

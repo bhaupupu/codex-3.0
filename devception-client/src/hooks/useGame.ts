@@ -20,7 +20,12 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
     // Room events
     socket.on('room:state', (game) => {
       gameStore.setGame(game);
-      editorStore.setInitialCode(game.sharedCode, game.editorVersion, game.protectedRanges ?? []);
+      // Only initialize the editor from room:state when we're in the lobby.
+      // During an active game, room:state can fire for reconnects/joins and
+      // must NOT re-insert the template — the live Y.Doc is the source of truth.
+      if (game.phase === 'waiting' || game.phase === 'role-reveal') {
+        editorStore.setInitialCode(game.sharedCode ?? '', game.editorVersion ?? 0, game.protectedRanges ?? []);
+      }
     });
     socket.on('room:player-joined', gameStore.addPlayer);
     socket.on('room:player-left', ({ userId }) => gameStore.removePlayer(userId));
@@ -38,10 +43,18 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
     socket.on('game:phase-change', ({ phase, game }) => {
       gameStore.updatePhase(phase as Parameters<typeof gameStore.updatePhase>[0]);
       if (game) {
+        // Update game state but do NOT call setInitialCode here.
+        // The CodeEditor bootstraps its Y.Doc via editor:request-state →
+        // server state-vector. Calling setInitialCode would have triggered
+        // a resetNonce cascade causing N×N template duplications.
         gameStore.setGame(game);
-        if (game.sharedCode) {
-          editorStore.setInitialCode(game.sharedCode, game.editorVersion, game.protectedRanges ?? []);
-        }
+      }
+      // When the game goes live, re-request the editor state in case the initial
+      // editor:request-state (fired at CodeEditor mount during role-reveal) was
+      // dropped because the Y.Doc wasn't ready yet. The server also pushes the
+      // state proactively, so this is a belt-and-suspenders pull request.
+      if (phase === 'in-progress') {
+        socket.emit('editor:request-state', { roomCode });
       }
     });
     socket.on('game:timer-tick', ({ remainingMs }) => gameStore.updateTimer(remainingMs));
