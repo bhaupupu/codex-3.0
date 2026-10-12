@@ -37,11 +37,11 @@ function resolveMongoUri(): string {
     if (isProduction) {
       throw new Error(
         '[env] MONGODB_URI is not set. On Render, add it in the dashboard → Environment tab. ' +
-        'Use a MongoDB Atlas connection string: mongodb+srv://user:pass@cluster.mongodb.net/codecrew'
+        'Use a MongoDB Atlas connection string: mongodb+srv://user:pass@cluster.mongodb.net/codex'
       );
     }
     // Local dev fallback
-    return 'mongodb://localhost:27017/codecrew';
+    return 'mongodb://localhost:27017/codex';
   }
 
   // Detect Railway-internal URIs being used on a non-Railway host
@@ -61,7 +61,7 @@ function resolveMongoUri(): string {
 
 // ─── Exported config ──────────────────────────────────────────────────────────
 export const env = {
-  PORT: parseInt(process.env.PORT || '4000', 10),
+  PORT: parseInt(process.env.PORT || '5000', 10),
   NODE_ENV: process.env.NODE_ENV || 'development',
   PLATFORM,
 

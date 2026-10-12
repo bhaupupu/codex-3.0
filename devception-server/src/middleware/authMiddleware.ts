@@ -33,7 +33,7 @@ export async function authMiddleware(
       { googleId: decoded.sub },
       {
         $set: {
-          email: decoded.email ?? `${decoded.sub}@codecrew.dev`,
+          email: decoded.email ?? `${decoded.sub}@codex.dev`,
           displayName: decoded.name ?? 'Player',
           avatarUrl: decoded.picture ?? '',
         },

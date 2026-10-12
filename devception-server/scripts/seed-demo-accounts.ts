@@ -20,7 +20,7 @@ function hashPassword(password: string): string {
 }
 
 async function seed() {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/codecrew';
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/codex';
   console.log(`Connecting to MongoDB at ${uri}...`);
   await mongoose.connect(uri);
 

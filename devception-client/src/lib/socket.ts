@@ -7,7 +7,7 @@ let socket: AppSocket | null = null;
 
 export function getSocket(token?: string): AppSocket {
   if (!socket || !socket.connected) {
-    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:4000', {
+    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL ?? 'http://localhost:5000', {
       auth: { token },
       autoConnect: false,
       reconnection: true,

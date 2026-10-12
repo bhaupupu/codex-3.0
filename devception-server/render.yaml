@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: devception-server
+    name: codex-server
     runtime: docker
     # Render's Oregon (US West) region — closest to MongoDB Atlas US East clusters.
     # Change to "frankfurt" if your Atlas cluster is in EU.
@@ -28,7 +28,7 @@ services:
 
       # ── Database ─────────────────────────────────────────────────────────────
       # Set this to your MongoDB Atlas connection string in the Render dashboard.
-      # Format:  mongodb+srv://<user>:<password>@<cluster>.mongodb.net/codecrew?retryWrites=true&w=majority
+      # Format:  mongodb+srv://<user>:<password>@<cluster>.mongodb.net/codex?retryWrites=true&w=majority
       # NEVER use Railway's internal URL here — it is not routable from Render.
       - key: MONGODB_URI
         sync: false   # prevents Render from syncing a stale value from render.yaml

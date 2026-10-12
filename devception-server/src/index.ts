@@ -121,7 +121,7 @@ process.on('uncaughtException', (err) => {
 
 // ─── Bootstrap ─────────────────────────────────────────────────────────────────
 async function bootstrap(): Promise<void> {
-  logger.info(`Starting CodeCrew server [platform=${env.PLATFORM}, env=${env.NODE_ENV}]`);
+  logger.info(`Starting Codex server [platform=${env.PLATFORM}, env=${env.NODE_ENV}]`);
   await connectDB();
   httpServer.listen(env.PORT, () => {
     logger.info(`Server running on port ${env.PORT}`);

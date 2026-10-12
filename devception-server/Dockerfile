@@ -39,9 +39,9 @@ RUN npm ci --omit=dev --ignore-scripts
 # rather than discovering it at game runtime.
 RUN python3 --version && g++ --version && node --version && echo 'int main(){return 0;}' | g++ -x c++ - -o /dev/null
 
-ENV PORT=4000
+ENV PORT=5000
 ENV NODE_ENV=production
 
-EXPOSE 4000
+EXPOSE 5000
 
 CMD ["node", "dist/index.js"]
