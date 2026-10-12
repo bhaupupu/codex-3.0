@@ -28,18 +28,18 @@ services:
 
       # ── Database ─────────────────────────────────────────────────────────────
       # Set this to your MongoDB Atlas connection string in the Render dashboard.
-      # Format:  mongodb+srv://<user>:<password>@<cluster>.mongodb.net/codex?retryWrites=true&w=majority
-      # NEVER use Railway's internal URL here — it is not routable from Render.
+      # Format: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/codex?retryWrites=true&w=majority
+      # Using 'codex' database ensures NO collision with 'codecrew' / original site.
       - key: MONGODB_URI
-        sync: false   # prevents Render from syncing a stale value from render.yaml
+        sync: false
 
       # ── Auth ─────────────────────────────────────────────────────────────────
-      # Must be identical to NEXTAUTH_SECRET in your Vercel frontend deployment.
+      # Must match NEXTAUTH_SECRET in your Vercel frontend deployment.
       - key: NEXTAUTH_SECRET
         sync: false
 
       # ── CORS ─────────────────────────────────────────────────────────────────
-      # Set to your Vercel production URL, e.g. https://devception.vercel.app
+      # Set to your Codex 3.0 Vercel URL: https://codex-3-0.vercel.app
       - key: CLIENT_ORIGIN
         sync: false
 
