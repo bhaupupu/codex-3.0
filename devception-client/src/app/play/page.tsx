@@ -71,12 +71,20 @@ export default function PlayPage() {
               <h2 className="pixel-font text-sm text-center" style={{ lineHeight: 2 }}>SELECT MODE</h2>
 
               <button
-                onClick={() => setView('create')}
-                className="pixel-btn pixel-btn-green w-full py-5"
+                onClick={() => router.push('/jr')}
+                className="pixel-btn pixel-btn-light w-full py-5"
                 style={{ fontSize: '11px' }}
               >
-                🏠  CREATE ROOM
+                ★ DEVCEPTION JR. · AGES 5–7
               </button>
+
+               <button
+                 onClick={() => setView('create')}
+                 className="pixel-btn pixel-btn-green w-full py-5"
+                 style={{ fontSize: '11px' }}
+               >
+                 🏠  CREATE ROOM
+               </button>
 
               <button
                 onClick={() => setView('join')}
@@ -101,10 +109,9 @@ export default function PlayPage() {
               exit={{ opacity: 0, y: -20 }}
               className="game-panel p-8 w-full max-w-md"
             >
-              <h2 className="pixel-font text-xs mb-6" style={{ lineHeight: 2 }}>ROOM SETTINGS</h2>
+               <h2 className="pixel-font text-xs mb-6" style={{ lineHeight: 2 }}>ROOM SETTINGS</h2>
 
-              {/* Language */}
-              <div className="mb-5">
+                <div className="mb-5">
                 <label className="pixel-font block mb-3" style={{ fontSize: 9, color: 'var(--text-secondary)' }}>
                   LANGUAGE
                 </label>
@@ -124,8 +131,8 @@ export default function PlayPage() {
                       {l.label}
                     </button>
                   ))}
+                 </div>
                 </div>
-              </div>
 
               {/* Skill level */}
               <div className="mb-5">

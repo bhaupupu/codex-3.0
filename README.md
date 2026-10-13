@@ -60,7 +60,27 @@ When unexpected bugs appear or test suites break, players call **Emergency Meeti
 7. **Emergency Meetings & Evidence Presentation:** Players pause the game to debate. Players can review the **Code Evidence Ledger**, cite suspicious line diffs in chat, and cast votes. Ties result in no ejection.
 8. **Authoritative Win Resolution:**
    - **Team Victory:** Team achieves 100% test progress or ejects all Impostors.
-   - **Impostor Victory:** Match timer expires (15 min) or Impostors achieve parity with remaining Developers.
+    - **Impostor Victory:** Match timer expires (15 min) or Impostors achieve parity with remaining Developers.
+
+### Devception Jr. — local pilot
+
+Open **`/jr`**, or choose **Devception Jr.** in the site navigation or Play menu.
+The junior route requires no account or backend. Robot Rescue is a hand-authored
+5×5 mission: collect the star and reach home using a short block program.
+
+- Native Blockly dragging plus large tap/keyboard buttons; Start and Finish are fixed anchors.
+- One, two, or three players sharing a device. Add, insert, change, remove, or pass;
+  each accepted action advances the visible turn. Running is a separate team confirmation.
+- Deterministic command interpreter with allowlist/size validation, wall and edge checks,
+  visible step playback, failure highlighting, and encouraging repair hints.
+- Optional browser narration, adjustable playback speed, and automatic local plan/progress saving.
+
+This implements the initial local-loop milestone. Network rooms, remote turn authority,
+and the next two missions are future milestones. Local turn validation is not a
+multiplayer security boundary. No Jr. free-form chat or AI is used.
+
+Core modules are in `devception-client/src/lib/jr`; the isolated UI is in
+`devception-client/src/components/jr` and `src/app/jr`.
 
 ---
 

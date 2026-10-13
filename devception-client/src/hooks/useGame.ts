@@ -58,7 +58,8 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
       }
     });
     socket.on('game:timer-tick', ({ remainingMs }) => gameStore.updateTimer(remainingMs));
-    socket.on('game:end', ({ winner }) => {
+    socket.on('game:end', ({ winner, game }) => {
+      if (game) gameStore.setGame(game);
       gameStore.setWinner(winner);
       gameStore.updatePhase('results');
       meetingStore.endMeeting();
@@ -80,6 +81,7 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
     socket.on('task:progress-update', ({ sharedProgress }) => {
       gameStore.updateProgress(sharedProgress);
     });
+
 
     // Imposter effects
     socket.on('imposter:keyboard-locked', ({ durationMs }: { durationMs: number }) => {
@@ -118,8 +120,16 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
       meetingStore.endMeeting();
       gameStore.updatePhase('in-progress');
     });
+    socket.on('detective:analysis-result', ({ evidenceId, analysis }) => {
+      if (analysis) {
+        meetingStore.setEvidenceAnalysis(evidenceId, analysis);
+      } else {
+        meetingStore.setAnalyzingEvidenceId(null);
+      }
+    });
 
     return () => {
+      socket.off('detective:analysis-result');
       socket.off('room:state');
       socket.off('room:player-joined');
       socket.off('room:player-left');

@@ -5,7 +5,7 @@ const COMMUNITY_LINKS = [
   {
     icon: '💬',
     title: 'DISCORD',
-    desc: 'Join 2,000+ developers in our community server. Find teammates, discuss matches, share strategies, and get the latest CodeSlayer news.',
+    desc: 'Join 2,000+ developers in our community server. Find teammates, discuss matches, share strategies, and get the latest Devception news.',
     cta: 'JOIN DISCORD',
     color: '#7c3aed',
     href: '#',
@@ -13,7 +13,7 @@ const COMMUNITY_LINKS = [
   {
     icon: '🐙',
     title: 'GITHUB',
-    desc: 'CodeSlayer is open source. Contribute to the codebase, report bugs, suggest features, or fork the project and build your own variant.',
+    desc: 'Devception is open source. Contribute to the codebase, report bugs, suggest features, or fork the project and build your own variant.',
     cta: 'VIEW REPO',
     color: '#e0e0e0',
     href: '#',
@@ -29,7 +29,7 @@ const COMMUNITY_LINKS = [
   {
     icon: '📰',
     title: 'NEWSLETTER',
-    desc: 'Weekly dispatches from the CodeSlayer team: match statistics, feature previews, community highlights, and upcoming event announcements.',
+    desc: 'Weekly dispatches from the Devception team: match statistics, feature previews, community highlights, and upcoming event announcements.',
     cta: 'SUBSCRIBE',
     color: '#16a34a',
     href: '#',
@@ -69,7 +69,7 @@ export default function CommunitySection() {
             maxWidth: 600,
             margin: '12px auto 0',
           }}>
-            The CodeSlayer community is where agents debrief, strategies are shared, and the next match begins. Find your team.
+            The Devception community is where agents debrief, strategies are shared, and the next match begins. Find your team.
           </p>
         </div>
 

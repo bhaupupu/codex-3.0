@@ -20,6 +20,9 @@ export function registerTaskHandlers(io: Server, socket: AuthenticatedSocket): v
       const game = gameService.getLiveGame(roomCode);
       if (!game) return;
 
+      const player = game.players.find((candidate) => candidate.userId === socket.userId);
+      if (game.phase !== 'in-progress' || !player?.isAlive) return;
+
       const task = game.tasks.find((t) => t._id === taskId);
       if (!task) {
         socket.emit('task:result', {
@@ -32,6 +35,16 @@ export function registerTaskHandlers(io: Server, socket: AuthenticatedSocket): v
         return;
       }
 
+      if (task.assignedTo !== socket.userId) {
+        socket.emit('task:result', {
+          taskId,
+          passed: false,
+          feedback: 'This task is assigned to another teammate.',
+          verdicts: [],
+          supported: true,
+        });
+        return;
+      }
       // Bug fix: use task.language (each task declares its own language), NOT
       // game.language. A C++ lobby can contain Python tasks and vice-versa.
       const taskLanguage = (task as any).language ?? game.language;
@@ -71,12 +84,16 @@ export function registerTaskHandlers(io: Server, socket: AuthenticatedSocket): v
           });
           io.to(roomCode).emit('task:progress-update', { sharedProgress: result.sharedProgress });
 
-          if (result.allDone) {
+            if (result.allDone) {
             // Guard against double endGame: editor debounce may also fire
             // simultaneously. completeTask returns null on a re-call, so this
             // branch only executes once per game.
             try { await endGame(roomCode, 'good-coders'); } catch (err) { logger.error('endGame on task completion failed', err as Error); }
-            io.to(roomCode).emit('game:end', { winner: 'good-coders' });
+             const endedGame = gameService.getLiveGame(roomCode);
+             io.to(roomCode).emit('game:end', {
+               winner: 'good-coders',
+               game: endedGame ? gameService.sanitizeGame(endedGame) as any : undefined,
+             });
           }
         }
       }

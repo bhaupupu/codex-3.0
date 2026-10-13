@@ -411,6 +411,73 @@ async function runTests() {
     assert.ok(res.stderr.includes('Syntax detonation') || res.compileOutput.includes('Syntax detonation'));
   });
 
+  // ─── 10. AI Enhancements ────────────────────────────────────────────────────
+  console.log('\n── 10. AI Enhancements: Detective, Co-Pilot & Developer Intelligence ─');
+
+  const {
+    analyzeEvidenceWithAstra,
+    getImpostorMission,
+    generateRedHerringHypothesis,
+    generateDeveloperReport,
+  } = await import('../services/astraAI.service');
+
+  await test('AI Code Detective: generates objective technical analysis without declaring guilt', async () => {
+    const analysis = await analyzeEvidenceWithAstra({
+      codeBefore: 'for (let i = 0; i <= arr.length; i++)',
+      codeAfter: 'for (let i = 0; i < arr.length - 1; i++)',
+      diffSnippet: 'i < arr.length - 1',
+      line: 14,
+      brokenTests: ['sumArray: last element processed'],
+      passingTests: [],
+      language: 'javascript',
+    });
+
+    assert.ok(analysis.technicalSummary);
+    assert.ok(analysis.behaviorChanged);
+    assert.ok(analysis.whyFailureOccurs);
+    assert.ok(analysis.supportingEvidence);
+    // Ensure the AI Detective never labels guilt
+    assert.strictEqual(/guilty|is the imposter|vote off/i.test(analysis.technicalSummary), false);
+  });
+
+  await test('Impostor Co-Pilot: generates strategic challenge-tailored mission', async () => {
+    const mission = await getImpostorMission('javascript', 'Array Sum Challenge', 'function sumArray(arr) {}');
+    assert.ok(mission.missionId);
+    assert.ok(mission.title);
+    assert.ok(mission.strategicObjective);
+    assert.ok(mission.successCondition);
+  });
+
+  await test('Impostor Co-Pilot: crafts plausible Red Herring debugging hypothesis', async () => {
+    const redHerring = await generateRedHerringHypothesis('javascript', 'String Processing', 'const clean = str.trim()');
+    assert.ok(redHerring.hypothesis);
+    assert.ok(Array.isArray(redHerring.argumentPoints));
+    assert.ok(redHerring.argumentPoints.length > 0);
+  });
+
+  await test('Developer Intelligence: generates personal report separating strategy from skill', async () => {
+    const report = await generateDeveloperReport({
+      displayName: 'Diana',
+      role: 'imposter',
+      isWinner: true,
+      tasksCompleted: 1,
+      totalTeamTasks: 5,
+      testsPassed: 4,
+      bugsIntroduced: 2,
+      bugsFixed: 0,
+      codeEditsCount: 6,
+      evidenceCitations: 2,
+      matchDurationMs: 450000,
+      finalTeamProgress: 75,
+      language: 'javascript',
+    });
+
+    assert.ok(report.profileTitle);
+    assert.ok(report.summary);
+    assert.ok(report.technicalStrengths.length > 0);
+    assert.ok(report.actionableAdvice);
+  });
+
   // ─── Summary ────────────────────────────────────────────────────────────────
   console.log('\n======================================================');
   console.log(`Results: ${passed} passed, ${failed} failed`);
@@ -419,7 +486,7 @@ async function runTests() {
   if (failed > 0) {
     process.exit(1);
   } else {
-    console.log('All game loop tests passed successfully! 🏆\n');
+    console.log('All game loop & AI enhancement tests passed successfully! 🏆\n');
     process.exit(0);
   }
 }

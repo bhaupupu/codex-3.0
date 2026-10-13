@@ -27,7 +27,7 @@ export default function AboutSection() {
             color: '#fff',
             lineHeight: 1.6,
           }}>
-            ABOUT CODESLAYER
+            ABOUT DEVCEPTION
           </h2>
         </div>
 
@@ -38,7 +38,7 @@ export default function AboutSection() {
               ORIGIN STORY
             </h3>
             <p style={{ marginBottom: 20 }}>
-              CodeSlayer was born from a late-night Discord conversation between two developers who had just finished a session of Among Us and thought: <em style={{ color: '#e0e0e0' }}>"What if the tasks were real code?"</em> That single question — asked somewhere between midnight and 2AM — became the seed of everything you see today.
+              Devception was born from a late-night Discord conversation between two developers who had just finished a session of Among Us and thought: <em style={{ color: '#e0e0e0' }}>"What if the tasks were real code?"</em> That single question — asked somewhere between midnight and 2AM — became the seed of everything you see today.
             </p>
             <p style={{ marginBottom: 20 }}>
               The founding team spent months prototyping ideas, discarding concepts that felt too mechanical, and slowly landing on a design that preserved the raw tension of social deduction while grounding it in something real: <strong style={{ color: '#e0e0e0' }}>actual programming challenges</strong>. The first playable prototype ran in a browser with a shared textarea, a 15-minute timer, and an imposter randomly chosen from five friends. The chaos that ensued — the accusations, the laughter, the genuine debate about whose commit broke the function — told the team they were onto something.
@@ -48,7 +48,7 @@ export default function AboutSection() {
               INSPIRATION
             </h3>
             <p style={{ marginBottom: 20 }}>
-              CodeSlayer draws from many worlds. From <strong style={{ color: '#e0e0e0' }}>Among Us</strong>, it borrows the imposter mechanic and the drama of an Emergency Meeting. From <strong style={{ color: '#e0e0e0' }}>VS Code</strong> and collaborative coding tools, it borrows the shared editor experience. From <strong style={{ color: '#e0e0e0' }}>Hacknet and classic terminal games</strong>, it borrows the aesthetic — the feeling that you are inside a system, not just playing with one. And from <strong style={{ color: '#e0e0e0' }}>competitive programming</strong>, it borrows the intellectual rigor that makes the challenges genuinely difficult and rewarding.
+              Devception draws from many worlds. From <strong style={{ color: '#e0e0e0' }}>Among Us</strong>, it borrows the imposter mechanic and the drama of an Emergency Meeting. From <strong style={{ color: '#e0e0e0' }}>VS Code</strong> and collaborative coding tools, it borrows the shared editor experience. From <strong style={{ color: '#e0e0e0' }}>Hacknet and classic terminal games</strong>, it borrows the aesthetic — the feeling that you are inside a system, not just playing with one. And from <strong style={{ color: '#e0e0e0' }}>competitive programming</strong>, it borrows the intellectual rigor that makes the challenges genuinely difficult and rewarding.
             </p>
             <p style={{ marginBottom: 20 }}>
               The visual identity — monospace everywhere, pixel fonts, dark backgrounds, sharp borders, grid overlays — was a deliberate choice to make the experience feel <strong style={{ color: '#e0e0e0' }}>authentically developer-native</strong>. This is not a game designed to look like a game designed for developers. This is a game designed by developers, for developers, that happens to look exactly like the tools developers love.
@@ -58,17 +58,17 @@ export default function AboutSection() {
               OUR VISION
             </h3>
             <p style={{ marginBottom: 20 }}>
-              Our vision is a world where developer entertainment and developer education are the same thing. Where the hours you spend playing CodeSlayer make you a sharper coder, a better communicator, and a more perceptive teammate — not as a side effect, but as a direct consequence of the game&apos;s design.
+              Our vision is a world where developer entertainment and developer education are the same thing. Where the hours you spend playing Devception make you a sharper coder, a better communicator, and a more perceptive teammate — not as a side effect, but as a direct consequence of the game&apos;s design.
             </p>
             <p style={{ marginBottom: 20 }}>
-              We believe that the future of technical community-building is interactive, competitive, and deeply social. Hackathons, coding competitions, and pair programming sessions are all gestures in this direction — CodeSlayer is the game that lives in that space permanently.
+              We believe that the future of technical community-building is interactive, competitive, and deeply social. Hackathons, coding competitions, and pair programming sessions are all gestures in this direction — Devception is the game that lives in that space permanently.
             </p>
 
             <h3 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 10, color: '#ca8a04', marginBottom: 20, lineHeight: 2 }}>
               COMMUNITY GOALS
             </h3>
             <p style={{ marginBottom: 20 }}>
-              CodeSlayer is free. Not freemium. Not free-to-start. Free. We believe access to this kind of collaborative developer experience should not be gated. Our community goals are simple: build the largest developer gaming community in the world, host regular competitive events, and create a space where beginner developers feel empowered to play alongside experienced engineers — because in CodeSlayer, social intelligence can outpace technical skill, and that&apos;s exactly the point.
+              Devception is free. Not freemium. Not free-to-start. Free. We believe access to this kind of collaborative developer experience should not be gated. Our community goals are simple: build the largest developer gaming community in the world, host regular competitive events, and create a space where beginner developers feel empowered to play alongside experienced engineers — because in Devception, social intelligence can outpace technical skill, and that&apos;s exactly the point.
             </p>
             <p>
               <strong style={{ color: '#2563eb' }}>Join us. The imposter is already waiting.</strong>
@@ -171,13 +171,6 @@ export default function AboutSection() {
         </div>
       </div>
 
-      <style jsx global>{`
-        @media (max-width: 900px) {
-          #about .section-container > div:last-child {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

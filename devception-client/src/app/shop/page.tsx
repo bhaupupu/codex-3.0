@@ -60,7 +60,7 @@ export default function ShopPage() {
         </div>
 
         <p className="text-center text-sm mt-10" style={{ color: 'var(--text-muted)' }}>
-          Cosmetics are planned for after launch. CodeSlayer will always be free to play — cosmetics will never affect gameplay or give any advantage.
+          Cosmetics are planned for after launch. Devception will always be free to play — cosmetics will never affect gameplay or give any advantage.
         </p>
       </div>
     </main>

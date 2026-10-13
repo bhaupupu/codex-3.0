@@ -1,4 +1,5 @@
 import { Game, IGame, IMainTestCaseState, IPlayerState, GamePhase } from '../models/Game.model';
+import mongoose from 'mongoose';
 import { GameHistory } from '../models/GameHistory.model';
 import { User } from '../models/User.model';
 import { generateRoomCode } from '../utils/roomCodeGenerator';
@@ -18,6 +19,7 @@ import {
 import { persistMatchToPostgres } from './postgres.service';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
+import { DetectiveAnalysis } from './astraAI.service';
 
 // ─── Code Evidence & Edit History Ledger ────────────────────────────────────────
 export interface CodeEvidenceItem {
@@ -30,6 +32,11 @@ export interface CodeEvidenceItem {
   actionType: 'edit' | 'sabotage' | 'test-regression';
   affectedDescription?: string;
   causedTestRegression?: boolean;
+  codeBefore?: string;
+  codeAfter?: string;
+  brokenTests?: string[];
+  passingTests?: string[];
+  astraAnalysis?: DetectiveAnalysis;
 }
 
 const EVIDENCE_LIMIT = 50;
@@ -47,6 +54,79 @@ export function recordEvidence(roomCode: string, item: Omit<CodeEvidenceItem, 'i
 
 export function getRoomEvidence(roomCode: string): CodeEvidenceItem[] {
   return liveEvidenceLog.get(roomCode) ?? [];
+}
+
+export function getEvidenceById(roomCode: string, evidenceId: string): CodeEvidenceItem | undefined {
+  const list = liveEvidenceLog.get(roomCode) ?? [];
+  return list.find((e) => e.id === evidenceId);
+}
+
+export function updateEvidenceAnalysis(
+  roomCode: string,
+  evidenceId: string,
+  analysis: DetectiveAnalysis
+): boolean {
+  const list = liveEvidenceLog.get(roomCode) ?? [];
+  const item = list.find((e) => e.id === evidenceId);
+  if (!item) return false;
+  item.astraAnalysis = analysis;
+  return true;
+}
+
+// ─── Player Match Metrics for Developer Intelligence ──────────────────────────
+export interface LivePlayerMetrics {
+  tasksCompleted: number;
+  testsPassed: number;
+  bugsIntroduced: number;
+  bugsFixed: number;
+  codeEditsCount: number;
+  evidenceCitations: number;
+}
+const roomPlayerMetrics = new Map<string, Map<string, LivePlayerMetrics>>();
+
+export function trackPlayerEdit(roomCode: string, userId: string): void {
+  const map = roomPlayerMetrics.get(roomCode) ?? new Map();
+  const m = map.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
+  m.codeEditsCount += 1;
+  map.set(userId, m);
+  roomPlayerMetrics.set(roomCode, map);
+}
+
+export function trackPlayerCitation(roomCode: string, userId: string): void {
+  const map = roomPlayerMetrics.get(roomCode) ?? new Map();
+  const m = map.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
+  m.evidenceCitations += 1;
+  map.set(userId, m);
+  roomPlayerMetrics.set(roomCode, map);
+}
+
+export function trackPlayerTestVerdict(roomCode: string, userId: string, passed: boolean): void {
+  const map = roomPlayerMetrics.get(roomCode) ?? new Map();
+  const m = map.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
+  if (passed) m.testsPassed += 1;
+  map.set(userId, m);
+  roomPlayerMetrics.set(roomCode, map);
+}
+
+export function trackPlayerBugIntroduced(roomCode: string, userId: string): void {
+  const map = roomPlayerMetrics.get(roomCode) ?? new Map();
+  const m = map.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
+  m.bugsIntroduced += 1;
+  map.set(userId, m);
+  roomPlayerMetrics.set(roomCode, map);
+}
+
+export function trackPlayerBugFixed(roomCode: string, userId: string): void {
+  const map = roomPlayerMetrics.get(roomCode) ?? new Map();
+  const m = map.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
+  m.bugsFixed += 1;
+  map.set(userId, m);
+  roomPlayerMetrics.set(roomCode, map);
+}
+
+export function getPlayerMetrics(roomCode: string, userId: string): LivePlayerMetrics {
+  const map = roomPlayerMetrics.get(roomCode);
+  return map?.get(userId) ?? { tasksCompleted: 0, testsPassed: 0, bugsIntroduced: 0, bugsFixed: 0, codeEditsCount: 0, evidenceCitations: 0 };
 }
 
 // Per-room judge configuration: the tests (regex or executable) plus the set of
@@ -101,7 +181,8 @@ const liveGames = new Map<string, IGame>();
 // Periodic flush to MongoDB every 60s — runs all updates in PARALLEL so a
 // single slow write doesn't delay the rest. Uses Promise.allSettled so
 // individual failures are logged without aborting the entire batch.
-setInterval(() => {
+const checkpointTimer = setInterval(() => {
+  if (mongoose.connection.readyState !== 1) return;
   const flushPromises: Promise<void>[] = [];
   for (const [roomCode, game] of liveGames.entries()) {
     if (game.phase !== 'waiting' && game.phase !== 'results') {
@@ -111,8 +192,8 @@ setInterval(() => {
           sharedProgress: game.sharedProgress,
           editorVersion: game.editorVersion,
           players: game.players,
-          tasks: game.tasks,
-          'timer.remainingMs': game.timer.remainingMs,
+           tasks: game.tasks,
+           'timer.remainingMs': game.timer.remainingMs,
         })
           .then(() => { /* ok */ })
           .catch((e) => { logger.error(`Checkpoint flush failed for ${roomCode}`, e); })
@@ -123,16 +204,29 @@ setInterval(() => {
     Promise.allSettled(flushPromises).catch(() => { /* allSettled never rejects */ });
   }
 }, 60000);
+checkpointTimer.unref?.();
 
 export async function createRoom(
   language: string,
   skillLevel: 'beginner' | 'intermediate' | 'advanced',
-  maxPlayers: number = 8
+  maxPlayers: number = 8,
 ): Promise<IGame> {
   const roomCode = generateRoomCode();
   const clampedMax = Math.min(10, Math.max(4, maxPlayers));
-  const game = new Game({ roomCode, language, skillLevel, maxPlayers: clampedMax });
-  await game.save();
+  const game = new Game({
+    roomCode,
+    language,
+    skillLevel,
+    maxPlayers: clampedMax,
+  });
+  try {
+    if (mongoose.connection.readyState === 1) await game.save();
+  } catch (err) {
+    // Gameplay remains available when MongoDB is intentionally absent in local
+    // test/dev environments. The in-memory live room is still authoritative;
+    // production deployments should provide MongoDB for durable history.
+    logger.warn('Room persistence unavailable; using in-memory room state', { error: (err as Error).message });
+  }
   liveGames.set(roomCode, game);
   return game;
 }
@@ -210,7 +304,11 @@ export async function addPlayerToGame(
     game.players.push(player);
   }
 
-  await Game.findByIdAndUpdate(game._id, { players: game.players });
+  try {
+    if (mongoose.connection.readyState === 1) await Game.findByIdAndUpdate(game._id, { players: game.players });
+  } catch (err) {
+    logger.warn('Player persistence unavailable; keeping live room state', { error: (err as Error).message });
+  }
   return game;
 }
 
@@ -255,7 +353,6 @@ export function startGame(roomCode: string): IGame | null {
   });
 
   const tasksPerPlayer = game.settings?.tasksPerPlayer ?? 5;
-  // Only good-coders receive tasks — imposters have sabotage abilities instead.
   const coders = game.players.filter((p) => p.role === 'good-coder');
   const totalTasksNeeded = coders.length * tasksPerPlayer;
   const tasks = generateTasksForGame(game.language, game.skillLevel, totalTasksNeeded);
@@ -386,8 +483,19 @@ export function updateSharedCode(
       line,
       snippet: `Line ${line}: "${preview.replace(/\n/g, '\\n')}"`,
       actionType: userId === 'imposter' ? 'sabotage' : 'edit',
+      codeBefore: game.sharedCode,
+      codeAfter: applied.result,
     });
+
+    if (userId === 'imposter') {
+      trackPlayerBugIntroduced(roomCode, userId);
+    } else {
+      trackPlayerEdit(roomCode, userId);
+    }
   }
+
+  game.sharedCode = applied.result;
+  game.editorVersion = baseVersion + 1;
 
   return { accepted: true, newCode: applied.result, currentVersion: game.editorVersion };
 }
@@ -728,6 +836,9 @@ export function checkMainTestCases(
           actionType: 'test-regression',
           affectedDescription: tc.description,
           causedTestRegression: true,
+          codeBefore: game.sharedCode,
+          codeAfter: code,
+          brokenTests: [tc.description],
         });
       }
       tc.passed = nowPassed;
@@ -742,8 +853,15 @@ export function checkMainTestCases(
 export function sanitizeGame(game: IGame): object {
   const obj = game.toObject();
   const protection = liveProtection.get(game.roomCode);
+  const revealRoles = game.phase === 'results';
+  const safePlayers = (obj.players as any[]).map((player) => ({
+    ...player,
+    // Hidden roles are only sent through the private game:role-reveal event.
+    role: revealRoles ? player.role : null,
+  }));
   return {
     ...obj,
+    players: safePlayers,
     tasks: (obj.tasks as any[]).map(({ solutionCode: _sc, ...rest }: any) => rest),
     protectedRanges: protection?.ranges.map((r) => ({ name: r.name, startLine: r.startLine, endLine: r.endLine })) ?? [],
   };

@@ -28,7 +28,8 @@ export interface ServerToClientEvents {
   'game:role-reveal': (data: { role: string; color: string }) => void;
   'game:phase-change': (data: { phase: string; timestamp?: number; game?: GameState }) => void;
   'game:timer-tick': (data: { remainingMs: number }) => void;
-  'game:end': (data: { winner: 'good-coders' | 'imposters' }) => void;
+  'game:end': (data: { winner: 'good-coders' | 'imposters'; game?: GameState }) => void;
+
 
   'editor:ydoc-sync': (data: { roomCode: string; update: ArrayBuffer }) => void;
   'editor:op-apply': (data: { userId: string; ops: EditorOp[]; version: number }) => void;
@@ -99,6 +100,60 @@ export interface ServerToClientEvents {
   'chat:error': (data: { message: string }) => void;
 
   'session:force-logout': (data: { reason: string; message: string }) => void;
+
+  // Feature 1: AI Code Detective
+  'detective:analysis-result': (data: { evidenceId: string; analysis?: DetectiveAnalysis; error?: string }) => void;
+
+  // Feature 2: Impostor Co-Pilot
+  'imposter:mission': (data: { mission: ImpostorMission }) => void;
+  'imposter:red-herring': (data: { hypothesis: string; argumentPoints: string[] }) => void;
+
+  // Feature 3: Post-Match Developer Intelligence
+  'report:developer-intelligence': (data: { report: DeveloperReport; metrics: PlayerMatchMetrics }) => void;
+}
+
+export interface PlayerMatchMetrics {
+  displayName: string;
+  role: 'good-coder' | 'imposter';
+  isWinner: boolean;
+  tasksCompleted: number;
+  totalTeamTasks: number;
+  testsPassed: number;
+  bugsIntroduced: number;
+  bugsFixed: number;
+  codeEditsCount: number;
+  evidenceCitations: number;
+  matchDurationMs: number;
+  finalTeamProgress: number;
+  language: string;
+  challengeTitle?: string;
+}
+
+export interface DetectiveAnalysis {
+  technicalSummary: string;
+  behaviorChanged: string;
+  testsAffected: string[];
+  whyFailureOccurs: string;
+  supportingEvidence: string;
+  uncertainties: string;
+}
+
+export interface ImpostorMission {
+  missionId: string;
+  title: string;
+  strategicObjective: string;
+  suggestedSabotage: string;
+  restrictions: string;
+  successCondition: string;
+}
+
+export interface DeveloperReport {
+  profileTitle: string;
+  summary: string;
+  technicalStrengths: string[];
+  growthAreas: string[];
+  actionableAdvice: string;
+  collaborationInsight: string;
 }
 
 export interface ClientToServerEvents {
@@ -118,15 +173,28 @@ export interface ClientToServerEvents {
 
   'task:submit': (data: { roomCode: string; taskId: string; submittedCode: string }) => void;
 
+
   'imposter:inject-bug': (data: { roomCode: string }) => void;
   'imposter:blur-screen': (data: { roomCode: string; targetUserId: string }) => void;
   'imposter:variable-shadow': (data: { roomCode: string }) => void;
   'imposter:lock-keyboard': (data: { roomCode: string; targetUserId: string }) => void;
 
+  // Feature 2: Impostor Co-Pilot
+  'imposter:get-mission': (data: { roomCode: string }) => void;
+  'imposter:get-red-herring': (data: { roomCode: string }) => void;
+  'imposter:deploy-red-herring': (data: { roomCode: string; text: string }) => void;
+
   'meeting:call': (data: { roomCode: string }) => void;
   'meeting:vote': (data: { roomCode: string; meetingId: string; targetId: string }) => void;
   'meeting:get-evidence': (data: { roomCode: string }) => void;
   'chat:present-evidence': (data: { roomCode: string; evidenceId: string }) => void;
+
+  // Feature 1: AI Code Detective
+  'detective:analyze-evidence': (data: { roomCode: string; evidenceId: string }) => void;
+  'detective:cite-analysis': (data: { roomCode: string; evidenceId: string }) => void;
+
+  // Feature 3: Post-Match Developer Intelligence
+  'report:get-developer-intelligence': (data: { roomCode: string }) => void;
 
   'chat:send': (data: { roomCode: string; message: string }) => void;
 }

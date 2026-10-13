@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function MeetingModal({ socket, roomCode, myUserId }: Props) {
-  const { meeting, setMyVote } = useMeetingStore();
+  const { meeting, setMyVote, setAnalyzingEvidenceId } = useMeetingStore();
   const { game } = useGameStore();
   const [discussionTime, setDiscussionTime] = useState(0);
   const [votingTime, setVotingTime] = useState(0);
@@ -50,6 +50,15 @@ export function MeetingModal({ socket, roomCode, myUserId }: Props) {
 
   const handleCiteEvidence = (evidenceId: string) => {
     socket?.emit('chat:present-evidence', { roomCode, evidenceId });
+  };
+
+  const handleAnalyzeEvidence = (evidenceId: string) => {
+    setAnalyzingEvidenceId(evidenceId);
+    socket?.emit('detective:analyze-evidence', { roomCode, evidenceId });
+  };
+
+  const handleCiteAnalysis = (evidenceId: string) => {
+    socket?.emit('detective:cite-analysis', { roomCode, evidenceId });
   };
 
   const alivePlayers = game?.players.filter((p) => p.isAlive) ?? [];
@@ -193,51 +202,122 @@ export function MeetingModal({ socket, roomCode, myUserId }: Props) {
                       No code edits or regressions logged yet this match.
                     </p>
                   ) : (
-                    evidenceList.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-3 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono"
-                        style={{
-                          background: item.causedTestRegression ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.05)',
-                          border: `1px solid ${item.causedTestRegression ? '#ef4444' : 'var(--border)'}`,
-                        }}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
-                              style={{
-                                background: item.causedTestRegression ? '#ef4444' : item.actionType === 'sabotage' ? '#f59e0b' : '#3b82f6',
-                                color: '#fff',
-                              }}>
-                              {item.causedTestRegression ? '⚠️ REGRESSION' : item.actionType.toUpperCase()}
-                            </span>
-                            <span className="text-gray-400 text-[10px]">
-                              {new Date(item.timestamp).toLocaleTimeString()}
-                            </span>
-                            <span className="text-gray-300 font-bold">
-                              by {item.displayName}
-                            </span>
+                    evidenceList.map((item) => {
+                      const isAnalyzing = meeting.analyzingEvidenceId === item.id;
+                      const hasAnalysis = !!item.astraAnalysis;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="p-3 rounded-lg flex flex-col gap-2.5 text-xs font-mono"
+                          style={{
+                            background: item.causedTestRegression ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.04)',
+                            border: `1px solid ${item.causedTestRegression ? '#ef4444' : 'var(--border)'}`,
+                          }}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span
+                                  className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
+                                  style={{
+                                    background: item.causedTestRegression ? '#ef4444' : item.actionType === 'sabotage' ? '#f59e0b' : '#3b82f6',
+                                    color: '#fff',
+                                  }}
+                                >
+                                  {item.causedTestRegression ? '⚠️ REGRESSION' : item.actionType.toUpperCase()}
+                                </span>
+                                <span className="text-gray-400 text-[10px]">
+                                  {new Date(item.timestamp).toLocaleTimeString()}
+                                </span>
+                                <span className="text-gray-300 font-bold">
+                                  by {item.displayName}
+                                </span>
+                              </div>
+                              <p className="text-gray-200 truncate">{item.snippet}</p>
+                              {item.affectedDescription && (
+                                <p className="text-red-400 text-[11px] mt-0.5">
+                                  Failed: {item.affectedDescription}
+                                </p>
+                              )}
+                            </div>
+
+                            {canAct && (
+                              <div className="flex gap-1.5 flex-shrink-0">
+                                {!hasAnalysis && (
+                                  <button
+                                    onClick={() => handleAnalyzeEvidence(item.id)}
+                                    disabled={isAnalyzing}
+                                    className="pixel-btn py-1 px-2.5 flex items-center gap-1"
+                                    style={{
+                                      fontSize: '9px',
+                                      background: isAnalyzing ? 'var(--bg-card)' : 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                                      color: '#fff',
+                                    }}
+                                    title="Ask Astra to analyze this code diff and test regression"
+                                  >
+                                    {isAnalyzing ? '⏳ ANALYZING...' : '🤖 ASTRA DETECTIVE'}
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => handleCiteEvidence(item.id)}
+                                  className="pixel-btn py-1 px-2"
+                                  style={{ fontSize: '9px', background: '#3b82f6', color: '#fff' }}
+                                  title="Cite this evidence in the discussion chat"
+                                >
+                                  💬 CITE
+                                </button>
+                              </div>
+                            )}
                           </div>
-                          <p className="text-gray-200 truncate">{item.snippet}</p>
-                          {item.affectedDescription && (
-                            <p className="text-red-400 text-[11px] mt-0.5">
-                              Failed: {item.affectedDescription}
-                            </p>
+
+                          {/* Astra Detective Analysis Card */}
+                          {hasAnalysis && item.astraAnalysis && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="mt-1 p-2.5 rounded border border-purple-500/40 bg-purple-950/20 text-xs"
+                            >
+                              <div className="flex items-center justify-between gap-2 mb-1.5 pb-1 border-b border-purple-500/20">
+                                <span className="text-[10px] font-bold text-purple-300 flex items-center gap-1">
+                                  <span>🤖</span> ASTRA TECHNICAL ANALYSIS
+                                </span>
+                                {canAct && (
+                                  <button
+                                    onClick={() => handleCiteAnalysis(item.id)}
+                                    className="text-[9px] px-2 py-0.5 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold tracking-wider"
+                                  >
+                                    📢 CITE ASTRA IN CHAT
+                                  </button>
+                                )}
+                              </div>
+
+                              <p className="text-gray-200 text-[11px] mb-1.5">
+                                <strong className="text-purple-300">Summary: </strong>
+                                {item.astraAnalysis.technicalSummary}
+                              </p>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] text-gray-300 bg-black/40 p-2 rounded">
+                                <div>
+                                  <span className="text-red-400 font-bold">Root Cause: </span>
+                                  {item.astraAnalysis.whyFailureOccurs}
+                                </div>
+                                <div>
+                                  <span className="text-yellow-400 font-bold">Behavior Shift: </span>
+                                  {item.astraAnalysis.behaviorChanged}
+                                </div>
+                              </div>
+
+                              {item.astraAnalysis.uncertainties && (
+                                <p className="text-[10px] text-gray-400 mt-1.5 italic">
+                                  <strong>Uncertainties: </strong> {item.astraAnalysis.uncertainties}
+                                </p>
+                              )}
+                            </motion.div>
                           )}
                         </div>
-
-                        {canAct && (
-                          <button
-                            onClick={() => handleCiteEvidence(item.id)}
-                            className="pixel-btn py-1 px-2 flex-shrink-0"
-                            style={{ fontSize: '8px', background: '#3b82f6', color: '#fff' }}
-                            title="Cite this evidence in the discussion chat"
-                          >
-                            💬 CITE IN CHAT
-                          </button>
-                        )}
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               )}

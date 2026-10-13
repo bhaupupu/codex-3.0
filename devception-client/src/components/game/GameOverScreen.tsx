@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { GameState, PlayerState } from '@/types/game';
 import { AppSocket } from '@/lib/socket';
+import { DeveloperIntelligenceModal } from '@/components/results/DeveloperIntelligenceModal';
 
 interface Props {
   game: GameState;
@@ -207,6 +208,16 @@ export function GameOverScreen({ game, myUserId, myRole: _myRole, socket, onPlay
               </motion.div>
             );
           })}
+      </motion.div>
+
+      {/* Developer Intelligence Dossier */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="w-full max-w-sm mb-4"
+      >
+        <DeveloperIntelligenceModal socket={socket} roomCode={game.roomCode} />
       </motion.div>
 
       {/* Buttons */}

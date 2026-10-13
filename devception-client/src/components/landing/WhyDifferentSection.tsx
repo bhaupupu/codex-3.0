@@ -33,7 +33,7 @@ export default function WhyDifferentSection() {
             color: '#fff',
             lineHeight: 1.6,
           }}>
-            WHY CODESLAYER IS DIFFERENT
+            WHY DEVCEPTION IS DIFFERENT
           </h2>
         </div>
 
@@ -51,7 +51,7 @@ export default function WhyDifferentSection() {
                 background: '#0d1117',
                 borderBottom: '2px solid rgba(37,99,235,0.3)',
               }}>
-                {['FEATURE', 'TRADITIONAL', 'CODESLAYER'].map((h, i) => (
+                {['FEATURE', 'TRADITIONAL', 'DEVCEPTION'].map((h, i) => (
                   <div key={h} style={{
                     padding: '12px 16px',
                     fontFamily: "'Press Start 2P', monospace",
@@ -132,10 +132,10 @@ export default function WhyDifferentSection() {
               marginBottom: 20,
               lineHeight: 2,
             }}>
-              THE CODESLAYER DIFFERENCE
+              THE DEVCEPTION DIFFERENCE
             </h3>
             <p style={{ marginBottom: 20 }}>
-              CodeSlayer didn&apos;t start from the question &quot;how do we make coding more educational?&quot; It started from the question &quot;how do we make coding genuinely fun?&quot; The two answers turned out to be the same.
+              Devception didn&apos;t start from the question &quot;how do we make coding more educational?&quot; It started from the question &quot;how do we make coding genuinely fun?&quot; The two answers turned out to be the same.
             </p>
             <p style={{ marginBottom: 20 }}>
               When you introduce <strong style={{ color: '#e0e0e0' }}>social deduction mechanics</strong> into a coding environment, something extraordinary happens: players become more alert, more analytical, and more engaged. You start noticing patterns in how people write code. You start paying attention to who makes changes during critical moments. You start <strong style={{ color: '#e0e0e0' }}>thinking about code as behavior</strong>, not just syntax.
@@ -144,7 +144,7 @@ export default function WhyDifferentSection() {
               This is a higher-order cognitive skill than simply solving the correct algorithm. It&apos;s the skill of <strong style={{ color: '#e0e0e0' }}>reading a codebase like a detective</strong> reads a crime scene.
             </p>
             <p style={{ marginBottom: 20 }}>
-              Players who spend time in CodeSlayer report that they become more attentive code reviewers in their professional lives. They learn to spot suspicious commits, unusual refactors, and subtle logic errors — because they&apos;ve spent hours playing a game where those same things were weapons.
+              Players who spend time in Devception report that they become more attentive code reviewers in their professional lives. They learn to spot suspicious commits, unusual refactors, and subtle logic errors — because they&apos;ve spent hours playing a game where those same things were weapons.
             </p>
             <p>
               <strong style={{ color: '#2563eb' }}>This is coding for people who love games. Games for people who love coding. And a new kind of experience for everyone in between.</strong>

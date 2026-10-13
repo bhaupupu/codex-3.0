@@ -3,6 +3,7 @@ import { AuthenticatedSocket } from '../middleware/socketAuth';
 import * as gameService from '../../services/game.service';
 import * as imposterService from '../../services/imposter.service';
 import { pickBugMutation, pickShadowMutation } from '../../utils/bugMutator';
+import { getImpostorMission, generateRedHerringHypothesis } from '../../services/astraAI.service';
 import { logger } from '../../utils/logger';
 
 export function registerImposterHandlers(io: Server, socket: AuthenticatedSocket): void {
@@ -166,4 +167,54 @@ export function registerImposterHandlers(io: Server, socket: AuthenticatedSocket
       });
     }
   );
+
+  // ─── Feature 2: Impostor Co-Pilot Mission Panel ─────────────────────────────
+  socket.on('imposter:get-mission', async ({ roomCode }: { roomCode: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    const player = game?.players.find((p) => p.userId === socket.userId);
+    if (!player || player.role !== 'imposter') return;
+
+    try {
+      const mission = await getImpostorMission(
+        game?.language || 'javascript',
+        game?.language ? `${game.language.toUpperCase()} Challenge` : 'Challenge',
+        game?.sharedCode || ''
+      );
+      socket.emit('imposter:mission', { mission });
+    } catch (err) {
+      logger.warn('[Imposter Co-Pilot] Failed to get mission', { error: (err as Error).message });
+    }
+  });
+
+  // ─── Feature 2: Red Herring Generation & Citation ───────────────────────────
+  socket.on('imposter:get-red-herring', async ({ roomCode }: { roomCode: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    const player = game?.players.find((p) => p.userId === socket.userId);
+    if (!player || player.role !== 'imposter') return;
+
+    try {
+      const redHerring = await generateRedHerringHypothesis(
+        game?.language || 'javascript',
+        'Challenge Logic',
+        game?.sharedCode || ''
+      );
+      socket.emit('imposter:red-herring', redHerring);
+    } catch (err) {
+      logger.warn('[Imposter Co-Pilot] Failed to generate red herring', { error: (err as Error).message });
+    }
+  });
+
+  socket.on('imposter:deploy-red-herring', ({ roomCode, text }: { roomCode: string; text: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    const player = game?.players.find((p) => p.userId === socket.userId);
+    if (!player || player.role !== 'imposter') return;
+
+    // Post red herring in team chat as an innocent debugging observation
+    io.to(roomCode).emit('chat:message', {
+      senderId: socket.userId,
+      senderName: socket.displayName,
+      message: `🤔 Hypothesis: ${text}`,
+      timestamp: Date.now(),
+    });
+  });
 }

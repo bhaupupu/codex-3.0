@@ -4,6 +4,7 @@ import * as gameService from '../../services/game.service';
 import { endGame } from '../../services/game.service';
 import * as sessionManager from '../../services/sessionManager.service';
 import { clearYDoc, getOrCreateYDoc, encodeRoomYDocState } from './editor.handler';
+import { generateDeveloperReport, PlayerMatchMetrics } from '../../services/astraAI.service';
 import { env } from '../../config/env';
 import { logger } from '../../utils/logger';
 
@@ -96,7 +97,7 @@ async function announceAndHandleLeave(
         : 'Too few good coders remain — imposters win!',
       timestamp: Date.now(),
     });
-    io.to(roomCode).emit('game:end', { winner: result.winner });
+    io.to(roomCode).emit('game:end', { winner: result.winner, game: gameService.sanitizeGame(gameService.getLiveGame(roomCode)!) as any });
   }
 }
 
@@ -126,6 +127,17 @@ export function registerRoomHandlers(io: Server, socket: AuthenticatedSocket): v
     // Broadcast full authoritative state to everyone in the room (including new player).
     // This ensures all clients have consistent player list, isConnected flags, etc.
     io.to(roomCode).emit('room:state', gameService.sanitizeGame(game));
+
+    // Rehydrate the private role after a refresh/reconnect. The public room
+    // snapshot deliberately contains role: null, so reconnecting players need
+    // this unicast to keep their permissions and imposter tools intact.
+    const reconnectedPlayer = game.players.find((player) => player.userId === socket.userId);
+    if (reconnectedPlayer && game.phase !== 'waiting') {
+      socket.emit('game:role-reveal', {
+        role: reconnectedPlayer.role,
+        color: reconnectedPlayer.color,
+      });
+    }
 
     if (cancelled) {
       // Reconnect inside grace — gentle signal so teammates know the player is back
@@ -211,6 +223,48 @@ export function registerRoomHandlers(io: Server, socket: AuthenticatedSocket): v
     logger.info(`${socket.displayName} reset room ${roomCode}`);
   });
 
+  // Feature 3: Post-Match Developer Intelligence Report
+  socket.on('report:get-developer-intelligence', async ({ roomCode }: { roomCode: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    const player = game?.players.find((p) => p.userId === socket.userId);
+    const liveMetrics = gameService.getPlayerMetrics(roomCode, socket.userId);
+
+    const isWinner =
+      (game?.winner === 'good-coders' && player?.role === 'good-coder') ||
+      (game?.winner === 'imposters' && player?.role === 'imposter');
+
+    const matchDurationMs = game?.timer?.gameStartedAt
+      ? (game.endedAt ? game.endedAt.getTime() : Date.now()) - game.timer.gameStartedAt.getTime()
+      : 900000;
+
+    const fullMetrics: PlayerMatchMetrics = {
+      displayName: socket.displayName || player?.displayName || 'Player',
+      role: player?.role || 'good-coder',
+      isWinner: !!isWinner,
+      tasksCompleted: player?.tasksCompleted?.length || liveMetrics.tasksCompleted || 0,
+      totalTeamTasks: game?.tasks?.length || 1,
+      testsPassed: liveMetrics.testsPassed,
+      bugsIntroduced: liveMetrics.bugsIntroduced,
+      bugsFixed: liveMetrics.bugsFixed,
+      codeEditsCount: liveMetrics.codeEditsCount,
+      evidenceCitations: liveMetrics.evidenceCitations,
+      matchDurationMs,
+      finalTeamProgress: game?.sharedProgress || 0,
+      language: game?.language || 'javascript',
+      challengeTitle: game?.language ? `${game.language.toUpperCase()} Challenge` : undefined,
+    };
+
+    try {
+      const report = await generateDeveloperReport(fullMetrics);
+      socket.emit('report:developer-intelligence', {
+        report,
+        metrics: fullMetrics,
+      });
+    } catch (err) {
+      logger.warn('[Developer Intelligence] Failed to generate report', { error: (err as Error).message });
+    }
+  });
+
   socket.on('disconnect', () => {
     const roomCode = socket.data.roomCode;
     if (!roomCode) return;
@@ -279,7 +333,10 @@ async function launchGame(io: Server, roomCode: string): Promise<void> {
   started.players.forEach((player) => {
     const playerSocket = io.sockets.sockets.get(player.socketId);
     if (playerSocket) {
-      playerSocket.emit('game:role-reveal', { role: player.role, color: player.color });
+        playerSocket.emit('game:role-reveal', {
+          role: player.role,
+          color: player.color,
+        });
     }
   });
 
@@ -332,7 +389,8 @@ function startGameTimer(io: Server, roomCode: string): void {
     if (remaining <= 0) {
       clearInterval(interval);
       try { await gameService.endGame(roomCode, 'imposters'); } catch (err) { logger.error('endGame timer expiry failed', err as Error); }
-      io.to(roomCode).emit('game:end', { winner: 'imposters' });
+       const endedGame = gameService.getLiveGame(roomCode);
+       io.to(roomCode).emit('game:end', { winner: 'imposters', game: endedGame ? gameService.sanitizeGame(endedGame) as any : undefined });
     }
   }, 1000);
 }

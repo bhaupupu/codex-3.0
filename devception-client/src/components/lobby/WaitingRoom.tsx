@@ -68,6 +68,7 @@ export function WaitingRoom({ game, myUserId: _myUserId, onReady, onForceStart, 
           >
             {game.roomCode}
           </div>
+
           <p className="text-xs mt-1" style={{ color: 'var(--text-muted)', fontFamily: 'Space Mono, monospace' }}>
             Share this code · tap to copy
           </p>

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { DetectiveAnalysis } from '@/types/socket';
 
 export interface EvidenceItem {
   id: string;
@@ -10,6 +10,7 @@ export interface EvidenceItem {
   actionType: string;
   affectedDescription?: string;
   causedTestRegression?: boolean;
+  astraAnalysis?: DetectiveAnalysis;
 }
 
 export interface MeetingState {
@@ -30,6 +31,7 @@ export interface MeetingState {
   discussionMs: number;
   votingMs: number;
   evidence: EvidenceItem[];
+  analyzingEvidenceId: string | null;
 }
 
 interface MeetingStore {
@@ -46,6 +48,8 @@ interface MeetingStore {
   markVoted: (userId: string) => void;
   setMyVote: (targetId: string) => void;
   setEvidence: (evidence: EvidenceItem[]) => void;
+  setEvidenceAnalysis: (evidenceId: string, analysis: DetectiveAnalysis) => void;
+  setAnalyzingEvidenceId: (id: string | null) => void;
   setResults: (data: {
     tally: Record<string, number>;
     ejected: MeetingState['ejected'];
@@ -53,6 +57,8 @@ interface MeetingStore {
   }) => void;
   endMeeting: () => void;
 }
+
+import { create } from 'zustand';
 
 export const useMeetingStore = create<MeetingStore>((set) => ({
   meeting: null,
@@ -72,14 +78,27 @@ export const useMeetingStore = create<MeetingStore>((set) => ({
         discussionMs,
         votingMs,
         evidence: evidence ?? [],
+        analyzingEvidenceId: null,
       },
     }),
 
   setEvidence: (evidence) =>
-    set((s) => s.meeting ? { meeting: { ...s.meeting, evidence } } : {}),
+    set((s) => (s.meeting ? { meeting: { ...s.meeting, evidence } } : {})),
+
+  setEvidenceAnalysis: (evidenceId, analysis) =>
+    set((s) => {
+      if (!s.meeting) return {};
+      const updatedEvidence = s.meeting.evidence.map((item) =>
+        item.id === evidenceId ? { ...item, astraAnalysis: analysis } : item
+      );
+      return { meeting: { ...s.meeting, evidence: updatedEvidence, analyzingEvidenceId: null } };
+    }),
+
+  setAnalyzingEvidenceId: (id) =>
+    set((s) => (s.meeting ? { meeting: { ...s.meeting, analyzingEvidenceId: id } } : {})),
 
   setPhase: (phase) =>
-    set((s) => s.meeting ? { meeting: { ...s.meeting, phase } } : {}),
+    set((s) => (s.meeting ? { meeting: { ...s.meeting, phase } } : {})),
 
   markVoted: (userId) =>
     set((s) => {
@@ -90,7 +109,7 @@ export const useMeetingStore = create<MeetingStore>((set) => ({
     }),
 
   setMyVote: (targetId) =>
-    set((s) => s.meeting ? { meeting: { ...s.meeting, myVote: targetId } } : {}),
+    set((s) => (s.meeting ? { meeting: { ...s.meeting, myVote: targetId } } : {})),
 
   setResults: ({ tally, ejected, wasTie }) =>
     set((s) =>

@@ -90,9 +90,9 @@ function scheduleTestCaseCheck(io: Server, roomCode: string): void {
       if (checkResult.changed) {
         io.to(roomCode).emit('editor:test-results', { testCases: checkResult.testCases });
       }
-      if (checkResult.allPassed) {
-        try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error, still emit */ }
-        io.to(roomCode).emit('game:end', { winner: 'good-coders' });
+       if (checkResult.allPassed) {
+         try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error, still emit */ }
+         io.to(roomCode).emit('game:end', { winner: 'good-coders', game: gameService.sanitizeGame(game) as any });
       }
     }, TEST_CHECK_DEBOUNCE_MS)
   );
@@ -238,11 +238,11 @@ export function registerEditorHandlers(io: Server, socket: AuthenticatedSocket):
       timestamp: Date.now(),
     });
 
-    if (allPassed) {
+     if (allPassed) {
       game.sharedProgress = 100;
       io.to(roomCode).emit('task:progress-update', { sharedProgress: 100 });
       try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error */ }
-      io.to(roomCode).emit('game:end', { winner: 'good-coders' });
+       io.to(roomCode).emit('game:end', { winner: 'good-coders', game: gameService.sanitizeGame(game) as any });
     }
   });
 
@@ -252,12 +252,12 @@ export function registerEditorHandlers(io: Server, socket: AuthenticatedSocket):
     if (!game || game.phase !== 'in-progress') return;
 
     const judgeResult = gameService.checkMainTestCases(roomCode, game.sharedCode);
-    if (judgeResult.allPassed) {
-      game.sharedProgress = 100;
-      io.to(roomCode).emit('task:progress-update', { sharedProgress: 100 });
-      try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error */ }
-      io.to(roomCode).emit('game:end', { winner: 'good-coders' });
-    } else {
+     if (judgeResult.allPassed) {
+          game.sharedProgress = 100;
+          io.to(roomCode).emit('task:progress-update', { sharedProgress: 100 });
+          try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error */ }
+          io.to(roomCode).emit('game:end', { winner: 'good-coders', game: gameService.sanitizeGame(game) as any });
+     } else {
       socket.emit('editor:submit-result', {
         success: false,
         message: 'Some tests are failing! Fix all errors before final submission.',

@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'CodeSlayer — Multiplayer Social Deduction Coding Game';
+export const alt = 'Devception — Multiplayer Social Deduction Coding Game';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -34,7 +34,7 @@ export default function OpengraphImage() {
             marginBottom: 28,
           }}
         >
-          {'>'} CODESLAYER
+          {'>'} DEVCEPTION
         </div>
         <div
           style={{

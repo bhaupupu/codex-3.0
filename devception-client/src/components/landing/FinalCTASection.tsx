@@ -234,7 +234,7 @@ export default function FinalCTASection() {
             boxShadow: '4px 4px 0 #44403c',
           }}
         >
-          <div style={{ color: '#2563eb' }}>&gt; codeslayer --join-match --trust=false</div>
+          <div style={{ color: '#2563eb' }}>&gt; devception --join-match --trust=false</div>
           <div style={{ color: '#16a34a' }}>Connecting to nearest game room...</div>
           <div style={{ color: '#ca8a04' }}>WARNING: Imposter detected in lobby.</div>
           <div style={{ color: '#e5e0d5' }}>

@@ -2,6 +2,7 @@ import { Server } from 'socket.io';
 import { AuthenticatedSocket } from '../middleware/socketAuth';
 import * as gameService from '../../services/game.service';
 import * as votingService from '../../services/voting.service';
+import { analyzeEvidenceWithAstra, DetectiveEvidencePackage } from '../../services/astraAI.service';
 import { env } from '../../config/env';
 import { randomUUID } from 'crypto';
 
@@ -65,10 +66,12 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
     // Discussion → voting
     setTimeout(() => {
       const currentGame = gameService.getLiveGame(roomCode);
-      if (!currentGame || currentGame.phase !== 'meeting') return;
+       if (!currentGame || currentGame.phase !== 'meeting') return;
 
-      gameService.setGamePhase(roomCode, 'voting');
-      io.to(roomCode).emit('meeting:phase-change', { meetingId, phase: 'voting' });
+       gameService.setGamePhase(roomCode, 'voting');
+       const currentMeeting = currentGame.meetings.find((candidate) => candidate._id === meetingId);
+       if (currentMeeting) currentMeeting.phase = 'voting';
+       io.to(roomCode).emit('meeting:phase-change', { meetingId, phase: 'voting' });
 
       // Schedule results — cancelled early if all players vote
       const timer = setTimeout(() => {
@@ -83,6 +86,8 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
   socket.on(
     'meeting:vote',
     ({ roomCode, meetingId, targetId }: { roomCode: string; meetingId: string; targetId: string }) => {
+      const activeGame = gameService.getLiveGame(roomCode);
+      if (!activeGame || activeGame.phase !== 'voting') return;
       const added = votingService.addVote(roomCode, meetingId, socket.userId, targetId);
       if (!added) return;
 
@@ -118,12 +123,71 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
     const item = evidenceList.find((e) => e.id === evidenceId);
     if (!item) return;
 
+    gameService.trackPlayerCitation(roomCode, socket.userId);
+
     io.to(roomCode).emit('chat:system', {
       type: 'system',
       message: `🔎 [EVIDENCE CITED by ${socket.displayName}]: ${item.snippet} (at ${new Date(item.timestamp).toLocaleTimeString()})`,
       timestamp: Date.now(),
     });
   });
+
+  // Feature 1: AI Code Detective — Analyze evidence with Astra
+  socket.on(
+    'detective:analyze-evidence',
+    async ({ roomCode, evidenceId }: { roomCode: string; evidenceId: string }) => {
+      const item = gameService.getEvidenceById(roomCode, evidenceId);
+      if (!item) {
+        socket.emit('detective:analysis-result', { evidenceId, error: 'Evidence item not found' });
+        return;
+      }
+
+      if (item.astraAnalysis) {
+        socket.emit('detective:analysis-result', { evidenceId, analysis: item.astraAnalysis });
+        return;
+      }
+
+      const game = gameService.getLiveGame(roomCode);
+      const pkg: DetectiveEvidencePackage = {
+        codeBefore: item.codeBefore || '',
+        codeAfter: item.codeAfter || '',
+        diffSnippet: item.snippet,
+        line: item.line,
+        brokenTests: item.brokenTests || (item.affectedDescription ? [item.affectedDescription] : []),
+        passingTests: [],
+        challengeTitle: game?.language ? `${game.language.toUpperCase()} Challenge` : 'Challenge',
+        language: game?.language || 'javascript',
+      };
+
+      try {
+        const analysis = await analyzeEvidenceWithAstra(pkg);
+        gameService.updateEvidenceAnalysis(roomCode, evidenceId, analysis);
+        socket.emit('detective:analysis-result', { evidenceId, analysis });
+      } catch (err) {
+        socket.emit('detective:analysis-result', {
+          evidenceId,
+          error: 'Analysis failed: ' + (err as Error).message,
+        });
+      }
+    }
+  );
+
+  // Feature 1: Present Astra Detective Analysis to Room Chat
+  socket.on(
+    'detective:cite-analysis',
+    ({ roomCode, evidenceId }: { roomCode: string; evidenceId: string }) => {
+      const item = gameService.getEvidenceById(roomCode, evidenceId);
+      if (!item || !item.astraAnalysis) return;
+
+      gameService.trackPlayerCitation(roomCode, socket.userId);
+
+      io.to(roomCode).emit('chat:system', {
+        type: 'system',
+        message: `🤖 [ASTRA DETECTIVE REPORT presented by ${socket.displayName}]: ${item.astraAnalysis.technicalSummary} Root Cause: ${item.astraAnalysis.whyFailureOccurs}`,
+        timestamp: Date.now(),
+      });
+    }
+  );
 }
 
 async function resolveVoting(io: Server, roomCode: string, meetingId: string): Promise<void> {
@@ -131,6 +195,8 @@ async function resolveVoting(io: Server, roomCode: string, meetingId: string): P
   if (!g) return;
 
   const { ejectedUserId, tally, wasTie } = votingService.tallyVotes(roomCode, meetingId);
+  const resolvedMeeting = g.meetings.find((meeting) => meeting._id === meetingId);
+  if (resolvedMeeting) resolvedMeeting.phase = 'results';
 
   let winner: 'good-coders' | 'imposters' | null = null;
   let gameOver = false;
@@ -163,7 +229,8 @@ async function resolveVoting(io: Server, roomCode: string, meetingId: string): P
   setTimeout(async () => {
     if (gameOver && winner) {
       try { await gameService.endGame(roomCode, winner); } catch (err) { console.error('endGame error:', err); }
-      io.to(roomCode).emit('game:end', { winner });
+       const endedGame = gameService.getLiveGame(roomCode);
+       io.to(roomCode).emit('game:end', { winner, game: endedGame ? gameService.sanitizeGame(endedGame) as any : undefined });
     } else {
       gameService.setGamePhase(roomCode, 'in-progress');
       io.to(roomCode).emit('game:phase-change', { phase: 'in-progress' });

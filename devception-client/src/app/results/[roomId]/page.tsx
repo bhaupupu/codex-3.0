@@ -3,8 +3,10 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
+import { useSocket } from '@/hooks/useSocket';
 import { WinnerBanner } from '@/components/results/WinnerBanner';
 import { PlayerStatCard } from '@/components/results/PlayerStatCard';
+import { DeveloperIntelligenceModal } from '@/components/results/DeveloperIntelligenceModal';
 import { Button } from '@/components/ui/Button';
 
 interface Props {
@@ -12,7 +14,8 @@ interface Props {
 }
 
 export default function ResultsPage({ params }: Props) {
-  void params;
+  const { roomId } = params;
+  const socket = useSocket();
   const { data: session } = useSession();
   const router = useRouter();
   const { game, myRole, reset } = useGameStore();
@@ -64,10 +67,19 @@ export default function ResultsPage({ params }: Props) {
         </motion.div>
 
         <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-6"
+        >
+          <DeveloperIntelligenceModal socket={socket} roomCode={roomId} />
+        </motion.div>
+
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="flex gap-3 mt-8"
+          className="flex gap-3 mt-6"
         >
           <Button size="lg" className="flex-1" onClick={handlePlayAgain}>
             Play Again

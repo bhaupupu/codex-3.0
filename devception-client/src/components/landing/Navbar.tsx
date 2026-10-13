@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { useCinematic } from './CinematicProvider';
+import { SITE } from '@/lib/site';
 
 const navLinks = [
+  { label: 'DEVCEPTION JR.', href: '/jr' },
   { label: 'HOW IT WORKS', href: '/#how-it-works' },
   { label: 'DEMO', href: '/#live-demo' },
-  { label: 'FAQ', href: '/#faq' },
   { label: 'ABOUT', href: '/about' },
 ];
 
@@ -98,7 +99,7 @@ export default function Navbar() {
             }}
           >
             <span style={{ color: '#2563eb' }}>&gt;</span>
-            CODESLAYER
+            {SITE.name.toUpperCase()}
           </Link>
 
           {/* CENTER LINKS (desktop) */}

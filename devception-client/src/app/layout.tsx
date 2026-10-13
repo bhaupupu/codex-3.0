@@ -19,11 +19,11 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'CodeSlayer — Real-Time Multiplayer Social Deduction Coding Game',
+  title: 'Devception — Real-Time Multiplayer Social Deduction Coding Game',
   description:
-    'CodeSlayer is a multiplayer social deduction coding game by Team Tarnished for CodeX 3.0. Collaborate on real programming challenges with 4–8 players while secretly hunting an imposter hidden among the team. Code together. Trust no one.',
+    'Devception is a multiplayer social deduction coding game by Team Tarnished for CodeX 3.0. Collaborate on real programming challenges with 4–8 players while secretly hunting an imposter hidden among the team. Code together. Trust no one.',
   keywords: [
-    'codeslayer',
+    'devception',
     'multiplayer coding game',
     'social deduction coding game',
     'team tarnished',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   creator: AUTHOR.name,
   publisher: SITE.name,
   openGraph: {
-    title: 'CodeSlayer — Code together. Trust no one.',
+    title: 'Devception — Code together. Trust no one.',
     description:
       'A real-time multiplayer social deduction coding game. Collaborate on code, experience sabotage, call meetings, and find the Impostor.',
     url: SITE.url,
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CodeSlayer — Code together. Trust no one.',
+    title: 'Devception — Code together. Trust no one.',
     description:
       'A real-time multiplayer social deduction coding game by Team Tarnished | CodeX 3.0.',
     images: ['/opengraph-image'],
@@ -108,9 +108,9 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'WebApplication',
-                  name: 'CodeSlayer',
-                  alternateName: 'CodeSlayer Multiplayer Coding Game',
-                  description: 'CodeSlayer is a real-time multiplayer social deduction coding game. Practice code review and collaborate on real programming challenges with 4–8 players while hunting a hidden imposter.',
+                  name: 'Devception',
+                  alternateName: 'Devception Multiplayer Coding Game',
+                  description: 'Devception is a real-time multiplayer social deduction coding game. Practice code review and collaborate on real programming challenges with 4–8 players while hunting a hidden imposter.',
                   url: SITE.url,
                   applicationCategory: 'GameApplication',
                   genre: ['Multiplayer', 'Social Deduction', 'Coding', 'Educational'],

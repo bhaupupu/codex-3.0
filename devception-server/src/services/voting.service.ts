@@ -51,6 +51,13 @@ export function addVote(
   const meeting = game.meetings.find((m) => m._id === meetingId);
   if (!meeting) return false;
 
+  if (meeting.phase !== 'voting') return false;
+
+  if (targetId !== 'skip') {
+    const target = game.players.find((p) => p.userId === targetId);
+    if (!target?.isAlive) return false;
+  }
+
   const alreadyVoted = meeting.votes.some((v) => v.voterId === voterId);
   if (alreadyVoted) return false;
 

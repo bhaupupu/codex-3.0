@@ -76,7 +76,7 @@ function TerminalPanel() {
           letterSpacing: '0.1em',
         }}
       >
-        TERMINAL — CODESLAYER SECURE SHELL v2.1 &nbsp;&nbsp;&nbsp; [ENCRYPTED]
+        TERMINAL — DEVCEPTION SECURE SHELL v2.1 &nbsp;&nbsp;&nbsp; [ENCRYPTED]
       </div>
       <div style={{ marginTop: 28 }}>
         {lines.map((line, i) => (
@@ -103,7 +103,7 @@ function TerminalPanel() {
 
 /* ── VS Code Panel ── */
 function VSCodePanel() {
-  const code = `// codeslayer-match.ts
+  const code = `// devception-match.ts
 // MISSION ACTIVE — DO NOT DISTRIBUTE
 
 const players: Player[] = loadSession();
@@ -169,7 +169,7 @@ startMatch(currentRoom);`;
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ffbd2e' }} />
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#28c940' }} />
         <span style={{ color: '#888', fontSize: 9, marginLeft: 8, fontFamily: "'Press Start 2P', monospace" }}>
-          codeslayer-match.ts
+          devception-match.ts
         </span>
         <span style={{ marginLeft: 'auto', color: '#dc2626', fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>
           ● LIVE
@@ -408,7 +408,7 @@ export default function HeroSection() {
                 maxWidth: 500,
               }}
             >
-              CodeSlayer is a{' '}
+              Devception is a{' '}
               <strong style={{ color: '#1c1917' }}>multiplayer social deduction coding game</strong>{' '}
               where players collaborate on real coding challenges while secretly hunting an imposter
               hidden among the team.
@@ -473,16 +473,6 @@ export default function HeroSection() {
         </div>
       </motion.div>
 
-      <style>{`
-        @media (max-width: 900px) {
-          #hero .section-container > div > div:last-child {
-            display: none;
-          }
-          #hero .section-container > div {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

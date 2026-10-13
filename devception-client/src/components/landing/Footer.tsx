@@ -3,16 +3,12 @@ import React from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useCinematic } from './CinematicProvider';
+import { SITE } from '@/lib/site';
 
 const FOOTER_LINKS: Record<string, { label: string; href: string }[]> = {
   PRODUCT: [
     { label: 'About', href: '/about' },
     { label: 'How To Play', href: '/#how-it-works' },
-  ],
-  LEGAL: [
-    { label: 'Privacy Policy', href: '/privacy-policy' },
-    { label: 'Terms of Service', href: '/terms-of-service' },
-    { label: 'Cookie Policy', href: '/cookie-policy' },
   ],
   PLAY: [
     { label: 'PLAY NOW', href: '/lobby' },
@@ -56,7 +52,7 @@ export default function Footer() {
             className="footer-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: '2fr 1fr 1fr 1fr',
+              gridTemplateColumns: '2fr 1fr 1fr',
               gap: 48,
               marginBottom: 48,
               paddingBottom: 48,
@@ -79,7 +75,7 @@ export default function Footer() {
                 }}
               >
                 <span style={{ color: '#2563eb' }}>&gt;</span>
-                CODESLAYER
+                {SITE.name.toUpperCase()}
               </Link>
 
               <p
@@ -213,7 +209,7 @@ export default function Footer() {
                 letterSpacing: '0.06em',
               }}
             >
-              © 2026 CODESLAYER. ALL RIGHTS RESERVED.
+              © 2026 {SITE.name.toUpperCase()}. ALL RIGHTS RESERVED.
             </div>
 
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>

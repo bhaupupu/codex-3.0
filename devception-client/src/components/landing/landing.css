@@ -1,5 +1,5 @@
 /* ============================================================
-   CODESLAYER LANDING PAGE — LIGHT PARCHMENT / BLUEPRINT THEME
+   DEVCEPTION LANDING PAGE — LIGHT PARCHMENT / BLUEPRINT THEME
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
@@ -298,33 +298,6 @@
   background: #faf8f4;
   box-shadow: 4px 4px 0 #1c1917;
   text-align: center;
-}
-
-/* ---------- FAQ ACCORDION ---------- */
-.faq-item {
-  border-bottom: 2px solid rgba(28,25,23,0.15);
-}
-
-.faq-question {
-  cursor: pointer;
-  padding: 20px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'Space Mono', monospace;
-  font-size: 14px;
-  color: #1c1917;
-  transition: color 0.2s;
-}
-
-.faq-question:hover { color: #2563eb; }
-
-.faq-answer {
-  padding-bottom: 20px;
-  color: #44403c;
-  font-size: 13px;
-  line-height: 1.8;
-  font-family: 'Space Mono', monospace;
 }
 
 /* ---------- BLOG CARDS ---------- */

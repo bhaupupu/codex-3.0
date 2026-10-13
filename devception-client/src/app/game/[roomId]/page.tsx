@@ -18,7 +18,7 @@ import { PlayerList } from '@/components/game/PlayerList';
 import { SharedProgress } from '@/components/game/SharedProgress';
 import { ChatPanel } from '@/components/game/ChatPanel';
 import { EmergencyButton } from '@/components/game/EmergencyButton';
-import { ImposterActions } from '@/components/game/ImposterActions';
+import { ImposterMissionPanel } from '@/components/game/ImposterMissionPanel';
 import { ScreenBlurOverlay } from '@/components/game/ScreenBlurOverlay';
 import { MeetingModal } from '@/components/meeting/MeetingModal';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
@@ -223,14 +223,13 @@ export default function GamePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Right: Task panel + imposter actions + chat */}
-        <div className="w-60 flex-shrink-0 flex flex-col gap-2">
+        {/* Right: Task panel + imposter mission panel + chat */}
+        <div className="w-64 flex-shrink-0 flex flex-col gap-2">
           {myRole === 'imposter' && (
-            <ImposterActions
+            <ImposterMissionPanel
               socket={socket}
               roomCode={roomId}
-              players={game.players}
-              myUserId={userId}
+              isAlive={canEdit}
             />
           )}
           <div className="flex-1 min-h-0">
@@ -281,11 +280,10 @@ export default function GamePage({ params }: Props) {
           {mobileTab === 'tasks' && (
             <div className="h-full flex flex-col gap-2 pt-1">
               {myRole === 'imposter' && (
-                <ImposterActions
+                <ImposterMissionPanel
                   socket={socket}
                   roomCode={roomId}
-                  players={game.players}
-                  myUserId={userId}
+                  isAlive={canEdit}
                 />
               )}
               <div className="flex-1 min-h-0">
