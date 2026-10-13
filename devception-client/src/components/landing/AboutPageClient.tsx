@@ -54,7 +54,7 @@ export default function AboutPageClient() {
     <div style={{ background: '#f0ece2', minHeight: '100vh' }}>
       <Navbar />
 
-      {/* ─── Hero: What is Devception ─── */}
+      {/* ─── Hero: What is CodeSlayer ─── */}
       <section
         className="pixel-bg"
         style={{
@@ -75,7 +75,7 @@ export default function AboutPageClient() {
               marginBottom: 24,
             }}
           >
-            WHAT IS DEVCEPTION?
+            WHAT IS CODESLAYER?
           </h1>
           <p
             style={{
@@ -87,7 +87,7 @@ export default function AboutPageClient() {
               margin: '0 auto 32px',
             }}
           >
-            <strong>Devception</strong> is an online multiplayer social deduction coding game built for developers. 
+            <strong>CodeSlayer</strong> is an online multiplayer social deduction coding game built for developers. 
             It merges the fast-paced suspicion of social deception games like <em>Among Us</em> with the technical 
             excitement of real-time collaborative programming.
           </p>
@@ -131,7 +131,7 @@ export default function AboutPageClient() {
                 lineHeight: 1.6,
               }}
             >
-              WHAT DOES DEVCEPTION DO?
+              WHAT DOES CODESLAYER DO?
             </h2>
           </div>
 

@@ -19,20 +19,19 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Devception — Multiplayer Social Deduction Coding Game',
+  title: 'CodeSlayer — Real-Time Multiplayer Social Deduction Coding Game',
   description:
-    'Devception is a multiplayer social deduction coding game. Collaborate on real programming challenges with 4–8 players while secretly hunting an imposter hidden among the team. Code together. Find the imposter. Trust no one.',
+    'CodeSlayer is a multiplayer social deduction coding game by Team Tarnished for CodeX 3.0. Collaborate on real programming challenges with 4–8 players while secretly hunting an imposter hidden among the team. Code together. Trust no one.',
   keywords: [
+    'codeslayer',
     'multiplayer coding game',
     'social deduction coding game',
-    'coding game with friends',
-    'developer party game',
-    'programming challenge multiplayer',
-    'coding competition game',
-    'among us coding game',
-    'devception',
-    'developer game',
-    'coding imposter game',
+    'team tarnished',
+    'codex 3.0',
+    'collaborative code editor',
+    'monaco editor multiplayer',
+    'judge0 coding game',
+    'programming party game',
   ],
   metadataBase: new URL(SITE.url),
   alternates: { canonical: '/' },
@@ -40,9 +39,9 @@ export const metadata: Metadata = {
   creator: AUTHOR.name,
   publisher: SITE.name,
   openGraph: {
-    title: 'Devception — One Of Your Teammates Is Lying.',
+    title: 'CodeSlayer — Code together. Trust no one.',
     description:
-      'A multiplayer social deduction coding game. Code together. Find the imposter. Trust no one.',
+      'A real-time multiplayer social deduction coding game. Collaborate on code, experience sabotage, call meetings, and find the Impostor.',
     url: SITE.url,
     siteName: SITE.name,
     type: 'website',
@@ -51,9 +50,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Devception — One Of Your Teammates Is Lying.',
+    title: 'CodeSlayer — Code together. Trust no one.',
     description:
-      'A multiplayer social deduction coding game. Code together. Find the imposter. Trust no one.',
+      'A real-time multiplayer social deduction coding game by Team Tarnished | CodeX 3.0.',
     images: ['/opengraph-image'],
   },
   robots: {
@@ -109,9 +108,9 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'WebApplication',
-                  name: 'Devception',
-                  alternateName: 'Devception Multiplayer Coding Game',
-                  description: 'Devception is a real-time multiplayer social deduction coding game. Practice code review and collaborate on real programming challenges with 4–8 players while hunting a hidden imposter.',
+                  name: 'CodeSlayer',
+                  alternateName: 'CodeSlayer Multiplayer Coding Game',
+                  description: 'CodeSlayer is a real-time multiplayer social deduction coding game. Practice code review and collaborate on real programming challenges with 4–8 players while hunting a hidden imposter.',
                   url: SITE.url,
                   applicationCategory: 'GameApplication',
                   genre: ['Multiplayer', 'Social Deduction', 'Coding', 'Educational'],

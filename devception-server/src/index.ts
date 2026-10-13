@@ -72,6 +72,8 @@ app.use(errorHandler);
 // ─── Socket.IO ─────────────────────────────────────────────────────────────────
 const io = createSocketServer(httpServer);
 
+import { initPostgres, disconnectPostgres } from './services/postgres.service';
+
 // ─── Graceful shutdown ─────────────────────────────────────────────────────────
 // Render (and Railway) send SIGTERM before forcefully killing the process.
 // We close the HTTP server first (stops accepting new requests), then shut down
@@ -95,11 +97,17 @@ async function shutdown(signal: string): Promise<void> {
     logger.info('Socket.IO server closed');
   });
 
-  // 3. Close MongoDB connection
+  // 3. Close Database connections
   try {
     await disconnectDB();
   } catch (err) {
     logger.error('Error closing MongoDB', { error: (err as Error).message });
+  }
+
+  try {
+    await disconnectPostgres();
+  } catch (err) {
+    logger.error('Error closing PostgreSQL', { error: (err as Error).message });
   }
 
   logger.info('Graceful shutdown complete');
@@ -121,10 +129,11 @@ process.on('uncaughtException', (err) => {
 
 // ─── Bootstrap ─────────────────────────────────────────────────────────────────
 async function bootstrap(): Promise<void> {
-  logger.info(`Starting Codex server [platform=${env.PLATFORM}, env=${env.NODE_ENV}]`);
+  logger.info(`Starting Code Slayer game server [platform=${env.PLATFORM}, env=${env.NODE_ENV}]`);
   await connectDB();
+  await initPostgres();
   httpServer.listen(env.PORT, () => {
-    logger.info(`Server running on port ${env.PORT}`);
+    logger.info(`Code Slayer Server running on port ${env.PORT}`);
   });
 }
 

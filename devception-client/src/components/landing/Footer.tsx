@@ -79,7 +79,7 @@ export default function Footer() {
                 }}
               >
                 <span style={{ color: '#2563eb' }}>&gt;</span>
-                DEVCEPTION
+                CODESLAYER
               </Link>
 
               <p
@@ -213,7 +213,7 @@ export default function Footer() {
                 letterSpacing: '0.06em',
               }}
             >
-              © 2026 DEVCEPTION. ALL RIGHTS RESERVED.
+              © 2026 CODESLAYER. ALL RIGHTS RESERVED.
             </div>
 
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>

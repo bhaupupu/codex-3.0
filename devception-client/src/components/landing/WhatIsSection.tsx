@@ -64,7 +64,7 @@ export default function WhatIsSection() {
         >
           {/* Section label */}
           <div className="section-label" style={{ marginBottom: 12 }}>
-            [WHAT IS DEVCEPTION]
+            [WHAT IS CODESLAYER]
           </div>
 
           {/* Main heading */}
@@ -124,7 +124,7 @@ export default function WhatIsSection() {
                     margin: 0,
                   }}
                 >
-                  Devception is not a coding tutorial. It&apos;s not a practice platform. It&apos;s
+                  CodeSlayer is not a coding tutorial. It&apos;s not a practice platform. It&apos;s
                   not another competitive programming judge. It is a{' '}
                   <strong style={{ color: '#1c1917' }}>
                     live multiplayer social deduction game
@@ -288,7 +288,7 @@ export default function WhatIsSection() {
                 perception of the match shifts.
               </p>
               <p>
-                Devception fuses this with coding. Every edit is potential evidence. Every function
+                CodeSlayer fuses this with coding. Every edit is potential evidence. Every function
                 added could be a silent sabotage. The coding challenge is the arena.{' '}
                 <strong style={{ color: '#2563eb' }}>The social deduction is the actual game.</strong>
               </p>

@@ -15,8 +15,39 @@ import {
   extractTopLevelIdentifiers,
   MainTestSpec,
 } from './mainCodeJudge.service';
+import { persistMatchToPostgres } from './postgres.service';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
+
+// ─── Code Evidence & Edit History Ledger ────────────────────────────────────────
+export interface CodeEvidenceItem {
+  id: string;
+  timestamp: number;
+  userId: string;
+  displayName: string;
+  line: number;
+  snippet: string;
+  actionType: 'edit' | 'sabotage' | 'test-regression';
+  affectedDescription?: string;
+  causedTestRegression?: boolean;
+}
+
+const EVIDENCE_LIMIT = 50;
+const liveEvidenceLog = new Map<string, CodeEvidenceItem[]>();
+
+export function recordEvidence(roomCode: string, item: Omit<CodeEvidenceItem, 'id'>): void {
+  const list = liveEvidenceLog.get(roomCode) ?? [];
+  list.unshift({
+    ...item,
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+  });
+  if (list.length > EVIDENCE_LIMIT) list.pop();
+  liveEvidenceLog.set(roomCode, list);
+}
+
+export function getRoomEvidence(roomCode: string): CodeEvidenceItem[] {
+  return liveEvidenceLog.get(roomCode) ?? [];
+}
 
 // Per-room judge configuration: the tests (regex or executable) plus the set of
 // top-level identifiers that must remain present. Built once at startGame.
@@ -261,6 +292,7 @@ export function startGame(roomCode: string): IGame | null {
     minLength: initialMinLength,
   });
   liveOpsLog.set(roomCode, []);
+  liveEvidenceLog.set(roomCode, []);
 
   game.phase = 'role-reveal';
   game.timer.gameStartedAt = new Date();
@@ -338,6 +370,24 @@ export function updateSharedCode(
   }
   if (log.length > OPS_LOG_LIMIT) log.splice(0, log.length - OPS_LOG_LIMIT);
   liveOpsLog.set(roomCode, log);
+
+  // Evidence logging for meeting investigations
+  if (ops.length > 0) {
+    const firstOp = ops[0];
+    const line = (applied.result.slice(0, firstOp.rangeOffset).match(/\n/g) || []).length + 1;
+    const player = game.players.find((p) => p.userId === userId);
+    const preview = firstOp.text.length > 0
+      ? (firstOp.text.length > 35 ? firstOp.text.slice(0, 32) + '...' : firstOp.text)
+      : '(deleted snippet)';
+    recordEvidence(roomCode, {
+      timestamp: now,
+      userId,
+      displayName: player?.displayName || (userId === 'imposter' ? 'Anonymous Collaborator' : 'Collaborator'),
+      line,
+      snippet: `Line ${line}: "${preview.replace(/\n/g, '\\n')}"`,
+      actionType: userId === 'imposter' ? 'sabotage' : 'edit',
+    });
+  }
 
   return { accepted: true, newCode: applied.result, currentVersion: game.editorVersion };
 }
@@ -508,6 +558,41 @@ export async function endGame(
     playedAt: new Date(),
   });
 
+  // Durably persist to PostgreSQL if configured
+  try {
+    await persistMatchToPostgres({
+      roomCode,
+      language: game.language,
+      skillLevel: game.skillLevel,
+      winner,
+      durationMs: gameDurationMs,
+      finalProgress: game.sharedProgress,
+      startedAt: game.timer.gameStartedAt,
+      endedAt: game.endedAt,
+      players: historyPlayers.map((p) => {
+        const livePlayer = game.players.find((gp) => gp.userId === p.userId);
+        return {
+          userId: p.userId,
+          displayName: livePlayer?.displayName || 'Unknown Player',
+          role: p.role,
+          isAlive: livePlayer?.isAlive ?? true,
+          isWinner: p.isWinner,
+          tasksCompleted: p.tasksCompleted,
+          xpEarned: p.xpEarned,
+        };
+      }),
+      meetings: game.meetings.map((m) => ({
+        meetingId: m._id,
+        calledBy: m.calledBy,
+        ejectedPlayer: m.ejectedPlayer,
+        wasImposter: m.wasImposter,
+        votes: m.votes || [],
+      })),
+    });
+  } catch (pgErr) {
+    logger.warn('[PostgreSQL] Failed to persist match in endGame', { error: (pgErr as Error).message });
+  }
+
   await Game.findByIdAndUpdate(game._id, {
     phase: 'results',
     winner,
@@ -584,6 +669,7 @@ export function resetGame(roomCode: string): IGame | null {
 
   liveProtection.delete(roomCode);
   liveOpsLog.delete(roomCode);
+  liveEvidenceLog.delete(roomCode);
 
   return game;
 }
@@ -631,6 +717,19 @@ export function checkMainTestCases(
     const verdict = verdictById.get(tc.id);
     const nowPassed = verdict?.passed ?? false;
     if (nowPassed !== tc.passed) {
+      if (tc.passed && !nowPassed) {
+        // Test regression: log evidence for investigation
+        recordEvidence(roomCode, {
+          timestamp: Date.now(),
+          userId: 'test-suite',
+          displayName: 'Test Suite',
+          line: 0,
+          snippet: `Test Case "${tc.description}" broke after recent edits!`,
+          actionType: 'test-regression',
+          affectedDescription: tc.description,
+          causedTestRegression: true,
+        });
+      }
       tc.passed = nowPassed;
       changed = true;
     }

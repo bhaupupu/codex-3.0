@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { AuthenticatedSocket } from '../middleware/socketAuth';
 import * as gameService from '../../services/game.service';
+import { evaluateCodeWithJudge0Sandbox } from '../../services/judge0.service';
 import { isSyntacticallyComplete } from '../../utils/syntaxValidator';
 import { logger } from '../../utils/logger';
 import * as Y from 'yjs';
@@ -178,4 +179,89 @@ export function registerEditorHandlers(io: Server, socket: AuthenticatedSocket):
       });
     }
   );
+
+  // Manual "Run Tests" on demand with sandboxed evaluation
+  socket.on('editor:run-tests', async ({ roomCode }: { roomCode: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    if (!game || (game.phase !== 'in-progress' && game.phase !== 'role-reveal')) {
+      socket.emit('editor:execution-result', {
+        success: false,
+        error: 'Game is not in active progress phase',
+      });
+      return;
+    }
+
+    const code = game.sharedCode;
+    const testCases = game.mainTestCases || [];
+
+    // Run structural integrity check first
+    const judgeResult = gameService.checkMainTestCases(roomCode, code);
+
+    // Run evaluation via judge0 sandbox or local dev fallback
+    const sandboxResult = await evaluateCodeWithJudge0Sandbox(
+      game.language,
+      code,
+      testCases.map((tc) => ({ id: tc.id, description: tc.description }))
+    );
+
+    // Merge verdicts: both sandbox and structural requirements must pass
+    const combinedVerdicts = testCases.map((tc) => {
+      const sandboxVerdict = sandboxResult.verdicts.find((v) => v.id === tc.id);
+      const structuralPassed = tc.passed;
+      const finalPassed = Boolean(sandboxVerdict?.passed && structuralPassed);
+      return {
+        id: tc.id,
+        description: tc.description,
+        passed: finalPassed,
+        output: sandboxVerdict?.output,
+        error: sandboxVerdict?.error,
+        executionTime: sandboxVerdict?.executionTime || 0.05,
+      };
+    });
+
+    const allPassed = combinedVerdicts.length > 0 && combinedVerdicts.every((v) => v.passed);
+
+    // Sync test case statuses
+    testCases.forEach((tc) => {
+      const cv = combinedVerdicts.find((v) => v.id === tc.id);
+      if (cv) tc.passed = cv.passed;
+    });
+
+    io.to(roomCode).emit('editor:test-results', { testCases: game.mainTestCases });
+
+    socket.emit('editor:execution-result', {
+      success: true,
+      sandbox: sandboxResult.sandbox,
+      compileError: sandboxResult.compileError,
+      verdicts: combinedVerdicts,
+      allPassed,
+      timestamp: Date.now(),
+    });
+
+    if (allPassed) {
+      game.sharedProgress = 100;
+      io.to(roomCode).emit('task:progress-update', { sharedProgress: 100 });
+      try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error */ }
+      io.to(roomCode).emit('game:end', { winner: 'good-coders' });
+    }
+  });
+
+  // Authoritative Submit Solution
+  socket.on('editor:submit-code', async ({ roomCode }: { roomCode: string }) => {
+    const game = gameService.getLiveGame(roomCode);
+    if (!game || game.phase !== 'in-progress') return;
+
+    const judgeResult = gameService.checkMainTestCases(roomCode, game.sharedCode);
+    if (judgeResult.allPassed) {
+      game.sharedProgress = 100;
+      io.to(roomCode).emit('task:progress-update', { sharedProgress: 100 });
+      try { await gameService.endGame(roomCode, 'good-coders'); } catch { /* db error */ }
+      io.to(roomCode).emit('game:end', { winner: 'good-coders' });
+    } else {
+      socket.emit('editor:submit-result', {
+        success: false,
+        message: 'Some tests are failing! Fix all errors before final submission.',
+      });
+    }
+  });
 }

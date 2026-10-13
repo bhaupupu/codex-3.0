@@ -1,5 +1,17 @@
 import { create } from 'zustand';
 
+export interface EvidenceItem {
+  id: string;
+  timestamp: number;
+  userId: string;
+  displayName: string;
+  line: number;
+  snippet: string;
+  actionType: string;
+  affectedDescription?: string;
+  causedTestRegression?: boolean;
+}
+
 export interface MeetingState {
   meetingId: string;
   calledBy: string;
@@ -17,6 +29,7 @@ export interface MeetingState {
   wasTie: boolean;
   discussionMs: number;
   votingMs: number;
+  evidence: EvidenceItem[];
 }
 
 interface MeetingStore {
@@ -27,10 +40,12 @@ interface MeetingStore {
     calledByName: string;
     discussionMs: number;
     votingMs: number;
+    evidence?: EvidenceItem[];
   }) => void;
   setPhase: (phase: MeetingState['phase']) => void;
   markVoted: (userId: string) => void;
   setMyVote: (targetId: string) => void;
+  setEvidence: (evidence: EvidenceItem[]) => void;
   setResults: (data: {
     tally: Record<string, number>;
     ejected: MeetingState['ejected'];
@@ -42,7 +57,7 @@ interface MeetingStore {
 export const useMeetingStore = create<MeetingStore>((set) => ({
   meeting: null,
 
-  startMeeting: ({ meetingId, calledBy, calledByName, discussionMs, votingMs }) =>
+  startMeeting: ({ meetingId, calledBy, calledByName, discussionMs, votingMs, evidence }) =>
     set({
       meeting: {
         meetingId,
@@ -56,8 +71,12 @@ export const useMeetingStore = create<MeetingStore>((set) => ({
         wasTie: false,
         discussionMs,
         votingMs,
+        evidence: evidence ?? [],
       },
     }),
+
+  setEvidence: (evidence) =>
+    set((s) => s.meeting ? { meeting: { ...s.meeting, evidence } } : {}),
 
   setPhase: (phase) =>
     set((s) => s.meeting ? { meeting: { ...s.meeting, phase } } : {}),

@@ -11,8 +11,8 @@ const OS_MENU = [
 ];
 
 const BOOT_LINES = [
-  'DEVCEPTION OS v1.0.7 [RETRO BUILD]',
-  'Copyright (c) 2024 Devception Corp. All rights reserved.',
+  'CODESLAYER OS v1.0.7 [RETRO BUILD]',
+  'Copyright (c) 2024 CodeSlayer Corp. All rights reserved.',
   '',
   'Initializing game kernel...',
   'Loading player registry...    OK',
@@ -50,7 +50,7 @@ export default function FakeOSSection() {
             color: '#fff',
             lineHeight: 1.6,
           }}>
-            DEVCEPTION OS
+            CODESLAYER OS
           </h2>
         </div>
 
@@ -58,7 +58,7 @@ export default function FakeOSSection() {
           <div className="os-window">
             {/* Title bar */}
             <div className="os-titlebar">
-              <span>DEVCEPTION OS v1.0 — SECURE TERMINAL</span>
+              <span>CODESLAYER OS v1.0 — SECURE TERMINAL</span>
               <div style={{ display: 'flex', gap: 8 }}>
                 <span style={{ cursor: 'pointer' }}>_</span>
                 <span style={{ cursor: 'pointer' }}>□</span>
@@ -73,7 +73,7 @@ export default function FakeOSSection() {
                 <div key={i} style={{
                   color: line.includes('OK') ? '#16a34a' : line.includes('READY') ? '#fff' : '#16a34a',
                   fontWeight: line.includes('READY') ? 700 : 400,
-                  fontSize: line.includes('DEVCEPTION OS') ? 14 : 13,
+                  fontSize: line.includes('CODESLAYER OS') ? 14 : 13,
                 }}>
                   {line || '\u00a0'}
                 </div>
@@ -166,7 +166,7 @@ export default function FakeOSSection() {
             marginTop: 12,
             letterSpacing: '0.1em',
           }}>
-            DEVCEPTION OS — RETRO INTERFACE BUILD · ALL RIGHTS RESERVED
+            CODESLAYER OS — RETRO INTERFACE BUILD · ALL RIGHTS RESERVED
           </p>
         </div>
       </div>

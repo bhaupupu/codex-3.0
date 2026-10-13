@@ -7,7 +7,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 /* ── Terminal animation ── */
 const TERMINAL_SEQUENCE = [
   { text: '> initializing secure room...', color: '#555', delay: 0 },
-  { text: 'SUCCESS — room ID: DCPTN-7734', color: '#16a34a', delay: 900 },
+  { text: 'SUCCESS — room ID: CDSLYR-7734', color: '#16a34a', delay: 900 },
   { text: '> assigning roles...', color: '#555', delay: 1600 },
   { text: 'SUCCESS — 1 IMPOSTER assigned', color: '#16a34a', delay: 2400 },
   { text: '> scanning for anomalies...', color: '#555', delay: 3200 },
@@ -76,7 +76,7 @@ function TerminalPanel() {
           letterSpacing: '0.1em',
         }}
       >
-        TERMINAL — DEVCEPTION SECURE SHELL v2.1 &nbsp;&nbsp;&nbsp; [ENCRYPTED]
+        TERMINAL — CODESLAYER SECURE SHELL v2.1 &nbsp;&nbsp;&nbsp; [ENCRYPTED]
       </div>
       <div style={{ marginTop: 28 }}>
         {lines.map((line, i) => (
@@ -103,7 +103,7 @@ function TerminalPanel() {
 
 /* ── VS Code Panel ── */
 function VSCodePanel() {
-  const code = `// devception-match.ts
+  const code = `// codeslayer-match.ts
 // MISSION ACTIVE — DO NOT DISTRIBUTE
 
 const players: Player[] = loadSession();
@@ -169,7 +169,7 @@ startMatch(currentRoom);`;
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ffbd2e' }} />
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#28c940' }} />
         <span style={{ color: '#888', fontSize: 9, marginLeft: 8, fontFamily: "'Press Start 2P', monospace" }}>
-          devception-match.ts
+          codeslayer-match.ts
         </span>
         <span style={{ marginLeft: 'auto', color: '#dc2626', fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>
           ● LIVE
@@ -408,7 +408,7 @@ export default function HeroSection() {
                 maxWidth: 500,
               }}
             >
-              Devception is a{' '}
+              CodeSlayer is a{' '}
               <strong style={{ color: '#1c1917' }}>multiplayer social deduction coding game</strong>{' '}
               where players collaborate on real coding challenges while secretly hunting an imposter
               hidden among the team.

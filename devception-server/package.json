@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "tsx src/tests/evaluator.test.ts && tsx src/tests/gameLoop.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.3.3",
+    "pg": "^8.23.1",
     "socket.io": "^4.8.3",
     "uuid": "^13.0.0",
     "winston": "^3.19.0",
@@ -38,6 +40,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
+    "@types/pg": "^8.23.1",
     "@types/uuid": "^10.0.0",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.21.0",

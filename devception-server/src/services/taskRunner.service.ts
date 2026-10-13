@@ -184,17 +184,47 @@ function extractEntryName(code: string): string | null {
 export function runJavaScriptTestCases(code: string, testCases: TestCase[]): RunResult {
   const entry = extractEntryName(code);
   if (!entry) {
+    const verdicts: TestVerdict[] = [];
+    const casesToRun = testCases.length > 0 ? testCases : [{ input: '', expectedOutput: '' }];
+    for (let i = 0; i < casesToRun.length; i++) {
+      const tc = casesToRun[i];
+      const expected = canonicalExpected(tc.expectedOutput);
+      let logs = '';
+      try {
+        const context = vm.createContext({
+          console: {
+            log(...args: unknown[]) { logs += args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ') + '\n'; },
+            warn(...args: unknown[]) { logs += args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ') + '\n'; },
+            error(...args: unknown[]) { logs += args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ') + '\n'; },
+          },
+        });
+        const script = new vm.Script(code, { filename: 'user-script.js' });
+        script.runInContext(context, { timeout: EXEC_TIMEOUT_MS, displayErrors: false });
+        const actual = logs.trim();
+        verdicts.push({
+          index: i,
+          input: tc.input,
+          expected,
+          actual,
+          passed: expected ? valuesMatch(actual, expected) : true,
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        const isTimeout = /timed? ?out|script execution timed out/i.test(msg);
+        verdicts.push({
+          index: i,
+          input: tc.input,
+          expected,
+          actual: logs.trim(),
+          passed: expected === 'throws',
+          error: isTimeout ? 'Execution timed out (>2s).' : msg,
+        });
+      }
+    }
     return {
       supported: true,
-      allPassed: false,
-      verdicts: testCases.map((tc, i) => ({
-        index: i,
-        input: tc.input,
-        expected: tc.expectedOutput,
-        actual: '',
-        passed: false,
-        error: 'Could not find a top-level function to run.',
-      })),
+      allPassed: verdicts.length > 0 && verdicts.every((v) => v.passed),
+      verdicts,
     };
   }
 

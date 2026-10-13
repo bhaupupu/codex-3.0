@@ -24,6 +24,7 @@ import { MeetingModal } from '@/components/meeting/MeetingModal';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { DirectJoinModal } from '@/components/game/DirectJoinModal';
+import { ExecutionConsole, ExecutionResultData } from '@/components/game/ExecutionConsole';
 
 type MobileTab = 'editor' | 'tasks' | 'chat' | 'players';
 
@@ -41,6 +42,41 @@ export default function GamePage({ params }: Props) {
   const [showRoleReveal, setShowRoleReveal] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor');
+
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [executionResults, setExecutionResults] = useState<ExecutionResultData | null>(null);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleExecutionResult = (data: ExecutionResultData) => {
+      setIsExecuting(false);
+      setExecutionResults(data);
+    };
+    const handleSubmitResult = (data: { success: boolean; message: string }) => {
+      setSubmitMessage(data.message);
+    };
+    socket.on('editor:execution-result', handleExecutionResult);
+    socket.on('editor:submit-result', handleSubmitResult);
+
+    return () => {
+      socket.off('editor:execution-result', handleExecutionResult);
+      socket.off('editor:submit-result', handleSubmitResult);
+    };
+  }, [socket]);
+
+  const handleRunTests = useCallback(() => {
+    if (!socket || !roomId) return;
+    setIsExecuting(true);
+    setSubmitMessage(null);
+    socket.emit('editor:run-tests', { roomCode: roomId });
+  }, [socket, roomId]);
+
+  const handleSubmitCode = useCallback(() => {
+    if (!socket || !roomId) return;
+    setSubmitMessage(null);
+    socket.emit('editor:submit-code', { roomCode: roomId });
+  }, [socket, roomId]);
 
   useGameEvents(socket, roomId);
   const { handleCursorMove } = useEditor(socket, roomId);
@@ -160,18 +196,31 @@ export default function GamePage({ params }: Props) {
               style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
               {game.language}
             </span>
+            <span className="text-xs font-mono text-gray-400 hidden sm:inline">
+              Solve shared challenge · Run sandbox tests · Achieve 100%
+            </span>
             <div className="flex-1" />
             <EmergencyButton onCall={callMeeting} disabled={!!meeting} />
           </div>
-            <div className="h-[65vh] md:h-full">
-              <CodeEditor
-                roomCode={roomId}
-                onCursorMove={onCursorMove}
-                language={game.language}
-                readOnly={isLocked || !canEdit}
-                onProtectedViolation={onProtectedViolation}
-              />
-            </div>
+          <div className="flex-1 min-h-[45vh]">
+            <CodeEditor
+              roomCode={roomId}
+              onCursorMove={onCursorMove}
+              language={game.language}
+              readOnly={isLocked || !canEdit}
+              onProtectedViolation={onProtectedViolation}
+            />
+          </div>
+          <div className="flex-shrink-0">
+            <ExecutionConsole
+              isRunning={isExecuting}
+              onRunTests={handleRunTests}
+              onSubmitCode={handleSubmitCode}
+              results={executionResults}
+              submitMessage={submitMessage}
+              disabled={isLocked || !canEdit}
+            />
+          </div>
         </div>
 
         {/* Right: Task panel + imposter actions + chat */}
@@ -214,6 +263,16 @@ export default function GamePage({ params }: Props) {
                   language={game.language}
                   readOnly={isLocked || !canEdit}
                   onProtectedViolation={onProtectedViolation}
+                />
+              </div>
+              <div className="flex-shrink-0">
+                <ExecutionConsole
+                  isRunning={isExecuting}
+                  onRunTests={handleRunTests}
+                  onSubmitCode={handleSubmitCode}
+                  results={executionResults}
+                  submitMessage={submitMessage}
+                  disabled={isLocked || !canEdit}
                 />
               </div>
             </div>

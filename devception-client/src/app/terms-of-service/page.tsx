@@ -2,28 +2,28 @@ import type { Metadata } from 'next';
 import LegalPageLayout from '@/components/landing/LegalPageLayout';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — Devception',
-  description: 'Read the Terms of Service for Devception, the multiplayer social deduction coding game.',
+  title: 'Terms of Service — CodeSlayer',
+  description: 'Read the Terms of Service for CodeSlayer, the multiplayer social deduction coding game.',
 };
 
 export default function TermsOfServicePage() {
   return (
     <LegalPageLayout
       title="TERMS OF SERVICE"
-      subtitle="Last updated: July 3, 2026. Please read these terms carefully before using Devception."
+      subtitle="Last updated: July 3, 2026. Please read these terms carefully before using CodeSlayer."
     >
       <h2>1. Acceptance of Terms</h2>
       <p>
-        By accessing or using Devception at <a href="https://devception.xyz">devception.xyz</a> (the
+        By accessing or using CodeSlayer at <a href="https://devception.xyz">devception.xyz</a> (the
         &quot;Service&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you
         do not agree to these Terms in their entirety, you may not access or use the Service. These Terms
-        constitute a binding legal agreement between you and the Devception team (&quot;Devception,&quot;
+        constitute a binding legal agreement between you and the CodeSlayer team (&quot;CodeSlayer,&quot;
         &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;).
       </p>
 
       <h2>2. Description of Service</h2>
       <p>
-        Devception is a real-time multiplayer social deduction coding game. Players join rooms of 4–8
+        CodeSlayer is a real-time multiplayer social deduction coding game. Players join rooms of 4–8
         participants, are assigned hidden roles (Developer or Imposter), and collaborate on shared coding
         challenges while attempting to identify the Imposter. The Imposter secretly attempts to introduce
         bugs and sabotage the team&apos;s progress without being detected.
@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
       </p>
 
       <h2>3. Account Requirements</h2>
-      <p>To use Devception, you must:</p>
+      <p>To use CodeSlayer, you must:</p>
       <ul>
         <li>Be at least 13 years of age. If you are under 18, you represent that you have obtained parental or guardian consent.</li>
         <li>Have a valid Google account, which is used for authentication via Google OAuth.</li>
@@ -57,12 +57,12 @@ export default function TermsOfServicePage() {
 
       <h2>5. Multiplayer Conduct</h2>
       <p>
-        Devception is a multiplayer game. You agree to the following conduct standards within the game:
+        CodeSlayer is a multiplayer game. You agree to the following conduct standards within the game:
       </p>
       <ul>
         <li><strong>No harassment:</strong> Do not harass, bully, threaten, or intimidate other players in any communication channel.</li>
         <li><strong>No hate speech:</strong> Do not use language that is discriminatory, racist, sexist, homophobic, or otherwise hateful.</li>
-        <li><strong>No impersonation:</strong> Do not impersonate other players, Devception staff, or any other person or entity.</li>
+        <li><strong>No impersonation:</strong> Do not impersonate other players, CodeSlayer staff, or any other person or entity.</li>
         <li><strong>No cheating:</strong> Do not use external tools, scripts, or exploits that give you an unfair advantage outside the designed imposter mechanics.</li>
         <li><strong>Fair play:</strong> The imposter mechanics (bug insertion, misleading hints) are designed features — using them as intended is encouraged. Exploiting unintended bugs in the game code is not.</li>
         <li><strong>Respect game sessions:</strong> Do not deliberately disconnect to ruin matches for other players.</li>
@@ -70,12 +70,12 @@ export default function TermsOfServicePage() {
 
       <h2>6. Intellectual Property</h2>
       <p>
-        The Devception platform, including its codebase, design, user interface, branding, logo, and all
-        content created by Devception (including coding challenges, game mechanics, and visual assets), is
-        owned by the Devception team and is protected by applicable intellectual property laws.
+        The CodeSlayer platform, including its codebase, design, user interface, branding, logo, and all
+        content created by CodeSlayer (including coding challenges, game mechanics, and visual assets), is
+        owned by the CodeSlayer team and is protected by applicable intellectual property laws.
       </p>
       <p>
-        Code challenges within Devception games are created by us and may not be reproduced, distributed,
+        Code challenges within CodeSlayer games are created by us and may not be reproduced, distributed,
         or used outside of the game context without our written permission. In-game code you write during
         matches is ephemeral and used solely for gameplay purposes. We do not claim ownership of code you
         write during matches.
@@ -120,7 +120,7 @@ export default function TermsOfServicePage() {
 
       <h2>10. Limitation of Liability</h2>
       <p>
-        TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL DEVCEPTION, ITS OPERATORS,
+        TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL CODESLAYER, ITS OPERATORS,
         DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL,
         CONSEQUENTIAL, OR EXEMPLARY DAMAGES, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOSS OF PROFITS,
         GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR RELATING TO THE USE OF, OR

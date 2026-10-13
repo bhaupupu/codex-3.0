@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import LegalPageLayout from '@/components/landing/LegalPageLayout';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — Devception',
-  description: 'Learn how Devception collects, uses, and protects your personal information when you use our multiplayer coding game.',
+  title: 'Privacy Policy — CodeSlayer',
+  description: 'Learn how CodeSlayer collects, uses, and protects your personal information when you use our multiplayer coding game.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -14,8 +14,8 @@ export default function PrivacyPolicyPage() {
     >
       <h2>1. Introduction</h2>
       <p>
-        Welcome to Devception (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). Devception is a multiplayer social deduction coding game
-        accessible at <a href="https://devception.xyz">devception.xyz</a>. We are operated by the Devception team,
+        Welcome to CodeSlayer (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). CodeSlayer is a multiplayer social deduction coding game
+        accessible at <a href="https://devception.xyz">devception.xyz</a>. We are operated by the CodeSlayer team,
         a group of student developers. This Privacy Policy explains how we collect, use, disclose, and safeguard your
         information when you visit our website and use our game. Please read this policy carefully. If you disagree
         with its terms, please discontinue use of the site immediately.
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>4. Google AdSense and Third-Party Advertising</h2>
       <p>
-        We use Google AdSense to display advertisements on Devception. Google AdSense is a third-party advertising
+        We use Google AdSense to display advertisements on CodeSlayer. Google AdSense is a third-party advertising
         service provided by Google LLC. Google uses cookies, web beacons, and similar tracking technologies to serve
         ads based on your prior visits to our website or other websites on the internet.
       </p>
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>9. Children&apos;s Privacy</h2>
       <p>
-        Devception is not directed at children under the age of 13, and we do not knowingly collect personal
+        CodeSlayer is not directed at children under the age of 13, and we do not knowingly collect personal
         information from children under 13. If you believe a child under 13 has provided us with personal information,
         please contact us immediately at <a href="mailto:guptadiwanshu2007@gmail.com">guptadiwanshu2007@gmail.com</a> and we will
         take steps to delete that information.

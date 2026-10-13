@@ -36,6 +36,16 @@ export interface ServerToClientEvents {
   'editor:protected-violation': (data: { reason: 'protected-violation' | 'min-length'; violationName: string; message: string }) => void;
   'editor:cursor-update': (data: { userId: string; line: number; column: number; color: string; displayName: string }) => void;
   'editor:test-results': (data: { testCases: { id: string; description: string; passed: boolean }[] }) => void;
+  'editor:execution-result': (data: {
+    success: boolean;
+    sandbox: string;
+    compileError?: string;
+    verdicts: Array<{ id: string; description: string; passed: boolean; output?: string; error?: string; executionTime?: number }>;
+    allPassed: boolean;
+    timestamp: number;
+    error?: string;
+  }) => void;
+  'editor:submit-result': (data: { success: boolean; message: string }) => void;
 
   'task:result': (data: { taskId: string; passed: boolean; feedback: string; verdicts: TaskVerdict[]; supported: boolean }) => void;
   'task:completed': (data: { taskId: string; completedBy: string; completedByName: string; sharedProgress: number }) => void;
@@ -46,7 +56,38 @@ export interface ServerToClientEvents {
   'imposter:cooldown-update': (data: { action: string; remainingMs: number; startCooldown?: boolean; cooldownMs?: number; applied?: boolean }) => void;
   'imposter:keyboard-locked': (data: { durationMs: number }) => void;
 
-  'meeting:start': (data: { meetingId: string; calledBy: string; calledByName: string; phase: string; discussionMs: number; votingMs: number }) => void;
+  'meeting:start': (data: {
+    meetingId: string;
+    calledBy: string;
+    calledByName: string;
+    phase: string;
+    discussionMs: number;
+    votingMs: number;
+    evidence?: Array<{
+      id: string;
+      timestamp: number;
+      userId: string;
+      displayName: string;
+      line: number;
+      snippet: string;
+      actionType: string;
+      affectedDescription?: string;
+      causedTestRegression?: boolean;
+    }>;
+  }) => void;
+  'meeting:evidence': (data: {
+    evidence: Array<{
+      id: string;
+      timestamp: number;
+      userId: string;
+      displayName: string;
+      line: number;
+      snippet: string;
+      actionType: string;
+      affectedDescription?: string;
+      causedTestRegression?: boolean;
+    }>;
+  }) => void;
   'meeting:vote-cast': (data: { voterId: string; hasVoted: boolean }) => void;
   'meeting:phase-change': (data: { meetingId: string; phase: string }) => void;
   'meeting:results': (data: { meetingId: string; tally: Record<string, number>; ejected: { userId: string; displayName: string; role: string; wasImposter: boolean } | null; wasTie: boolean }) => void;
@@ -72,6 +113,8 @@ export interface ClientToServerEvents {
   'editor:op': (data: { roomCode: string; ops: EditorOp[]; baseVersion: number }) => void;
   'editor:cursor-move': (data: { roomCode: string; line: number; column: number }) => void;
   'editor:request-state': (data: { roomCode: string }) => void;
+  'editor:run-tests': (data: { roomCode: string }) => void;
+  'editor:submit-code': (data: { roomCode: string }) => void;
 
   'task:submit': (data: { roomCode: string; taskId: string; submittedCode: string }) => void;
 
@@ -82,6 +125,8 @@ export interface ClientToServerEvents {
 
   'meeting:call': (data: { roomCode: string }) => void;
   'meeting:vote': (data: { roomCode: string; meetingId: string; targetId: string }) => void;
+  'meeting:get-evidence': (data: { roomCode: string }) => void;
+  'chat:present-evidence': (data: { roomCode: string; evidenceId: string }) => void;
 
   'chat:send': (data: { roomCode: string; message: string }) => void;
 }

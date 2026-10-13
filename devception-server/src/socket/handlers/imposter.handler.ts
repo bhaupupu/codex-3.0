@@ -33,7 +33,7 @@ export function registerImposterHandlers(io: Server, socket: AuthenticatedSocket
             rangeLength: mutation.rangeLength,
             text: mutation.text,
           };
-          const result = gameService.updateSharedCode(roomCode, [op], game.editorVersion, socket.userId);
+          const result = gameService.updateSharedCode(roomCode, [op], game.editorVersion, 'imposter');
           if (result.accepted) {
             io.to(roomCode).emit('editor:op-apply', {
               userId: 'imposter',
@@ -114,7 +114,7 @@ export function registerImposterHandlers(io: Server, socket: AuthenticatedSocket
             rangeLength: mutation.rangeLength,
             text: mutation.text,
           };
-          const result = gameService.updateSharedCode(roomCode, [op], game.editorVersion, socket.userId);
+          const result = gameService.updateSharedCode(roomCode, [op], game.editorVersion, 'imposter');
           if (result.accepted) {
             io.to(roomCode).emit('editor:op-apply', {
               userId: 'imposter',

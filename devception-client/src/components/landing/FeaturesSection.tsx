@@ -8,7 +8,7 @@ const MODULES = [
     icon: '⚡',
     status: 'ACTIVE',
     color: '#2563eb',
-    desc: 'Powered by Socket.IO, Devception delivers sub-100ms synchronization across all connected players. Every keystroke, cursor position, and code change propagates instantly to all participants. No refreshes. No polling. Pure WebSocket performance optimized for low-latency gaming.',
+    desc: 'Powered by Socket.IO, CodeSlayer delivers sub-100ms synchronization across all connected players. Every keystroke, cursor position, and code change propagates instantly to all participants. No refreshes. No polling. Pure WebSocket performance optimized for low-latency gaming.',
   },
   {
     id: '02',
@@ -56,7 +56,7 @@ const MODULES = [
     icon: '🎮',
     status: 'ACTIVE',
     color: '#16a34a',
-    desc: 'Devception\'s UI is a love letter to retro computing, hacker terminals, and classic multiplayer games. Pixel fonts, blueprint-grid backgrounds, sharp borders, scanline overlays, and monospace everywhere. This interface doesn\'t just display the game — it makes you feel like you\'re inside a classified operation.',
+    desc: 'CodeSlayer\'s UI is a love letter to retro computing, hacker terminals, and classic multiplayer games. Pixel fonts, blueprint-grid backgrounds, sharp borders, scanline overlays, and monospace everywhere. This interface doesn\'t just display the game — it makes you feel like you\'re inside a classified operation.',
   },
   {
     id: '08',
@@ -64,7 +64,7 @@ const MODULES = [
     icon: '🌐',
     status: 'BETA',
     color: '#ca8a04',
-    desc: 'Scheduled community tournaments, themed challenge weeks, and developer scrimmages. Compete in organized events with special leaderboards, exclusive cosmetics, and recognition in the Devception Hall of Fame. Events are announced via Discord and the in-game notification system.',
+    desc: 'Scheduled community tournaments, themed challenge weeks, and developer scrimmages. Compete in organized events with special leaderboards, exclusive cosmetics, and recognition in the CodeSlayer Hall of Fame. Events are announced via Discord and the in-game notification system.',
   },
 ];
 

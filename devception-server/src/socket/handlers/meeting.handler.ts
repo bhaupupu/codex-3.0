@@ -49,6 +49,8 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
     game.meetings.push(meeting);
     gameService.setGamePhase(roomCode, 'meeting');
 
+    const evidence = gameService.getRoomEvidence(roomCode);
+
     io.to(roomCode).emit('meeting:start', {
       meetingId,
       calledBy: socket.userId,
@@ -57,6 +59,7 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
       cooldownMs: MEETING_COOLDOWN_MS,
       discussionMs,
       votingMs,
+      evidence,
     });
 
     // Discussion → voting
@@ -104,6 +107,23 @@ export function registerMeetingHandlers(io: Server, socket: AuthenticatedSocket)
       }
     }
   );
+
+  socket.on('meeting:get-evidence', ({ roomCode }: { roomCode: string }) => {
+    const evidence = gameService.getRoomEvidence(roomCode);
+    socket.emit('meeting:evidence', { evidence });
+  });
+
+  socket.on('chat:present-evidence', ({ roomCode, evidenceId }: { roomCode: string; evidenceId: string }) => {
+    const evidenceList = gameService.getRoomEvidence(roomCode);
+    const item = evidenceList.find((e) => e.id === evidenceId);
+    if (!item) return;
+
+    io.to(roomCode).emit('chat:system', {
+      type: 'system',
+      message: `🔎 [EVIDENCE CITED by ${socket.displayName}]: ${item.snippet} (at ${new Date(item.timestamp).toLocaleTimeString()})`,
+      timestamp: Date.now(),
+    });
+  });
 }
 
 async function resolveVoting(io: Server, roomCode: string, meetingId: string): Promise<void> {

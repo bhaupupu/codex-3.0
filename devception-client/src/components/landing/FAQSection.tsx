@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 
 const FAQS = [
   {
-    q: 'What exactly is Devception?',
-    a: 'Devception is a real-time multiplayer social deduction coding game. 4–8 players join a shared game room, collaborate on a programming challenge, and attempt to identify a hidden imposter among their team — all within a 15–20 minute match. Think Among Us, but the tasks are real code and the stakes are your trust in your teammates.',
+    q: 'What exactly is CodeSlayer?',
+    a: 'CodeSlayer is a real-time multiplayer social deduction coding game. 4–8 players join a shared game room, collaborate on a programming challenge, and attempt to identify a hidden imposter among their team — all within a 15–20 minute match. Think Among Us, but the tasks are real code and the stakes are your trust in your teammates.',
   },
   {
     q: 'Do I need to be a good programmer to play?',
-    a: "Not necessarily. Devception offers Beginner, Intermediate, and Advanced difficulty levels. At beginner level, challenges are approachable even for newer developers. The social deduction aspect means that strong communication and observation skills can compensate for limited coding experience. Many top-ranked players aren't the best coders in their match — they're the best at reading people.",
+    a: "Not necessarily. CodeSlayer offers Beginner, Intermediate, and Advanced difficulty levels. At beginner level, challenges are approachable even for newer developers. The social deduction aspect means that strong communication and observation skills can compensate for limited coding experience. Many top-ranked players aren't the best coders in their match — they're the best at reading people.",
   },
   {
     q: 'How does the imposter sabotage without being caught?',
@@ -17,15 +17,15 @@ const FAQS = [
   },
   {
     q: 'What programming languages are supported?',
-    a: "Currently Devception supports Python, JavaScript, and C++. We plan to add Go, Rust, TypeScript, and Java in upcoming updates based on community demand. All challenges are language-specific, so you'll always be playing in a language you know.",
+    a: "Currently CodeSlayer supports Python, JavaScript, and C++. We plan to add Go, Rust, TypeScript, and Java in upcoming updates based on community demand. All challenges are language-specific, so you'll always be playing in a language you know.",
   },
   {
     q: 'How many players can be in a single match?',
     a: 'A match requires a minimum of 4 players and supports a maximum of 8 players. The number of imposters scales with player count: 1 imposter for matches of 4–5 players, and 2 imposters for matches of 6–8 players. This ensures the balance between deception and collaboration remains compelling regardless of room size.',
   },
   {
-    q: 'Is Devception free to play?',
-    a: 'Yes. Devception is completely free to play. All core gameplay features are available to all players at no cost. We may introduce optional cosmetic items in the future (through our in-development shop system), but gameplay will always remain free. We believe competitive access to collaborative developer experiences should not be paywalled.',
+    q: 'Is CodeSlayer free to play?',
+    a: 'Yes. CodeSlayer is completely free to play. All core gameplay features are available to all players at no cost. We may introduce optional cosmetic items in the future (through our in-development shop system), but gameplay will always remain free. We believe competitive access to collaborative developer experiences should not be paywalled.',
   },
   {
     q: 'How does the Emergency Meeting work?',
@@ -49,15 +49,15 @@ const FAQS = [
   },
   {
     q: 'Is there a ranking or competitive system?',
-    a: 'A points and ranking system is on the roadmap — it is not live yet. The plan is to award points for wins, correct imposter calls, accurate votes, and completed tasks, with seasonal resets and a leaderboard. Devception is pre-launch, so we would rather ship ranking properly than fake a leaderboard before it exists.',
+    a: 'A points and ranking system is on the roadmap — it is not live yet. The plan is to award points for wins, correct imposter calls, accurate votes, and completed tasks, with seasonal resets and a leaderboard. CodeSlayer is pre-launch, so we would rather ship ranking properly than fake a leaderboard before it exists.',
   },
   {
-    q: 'What technology powers Devception?',
-    a: "Devception's frontend is built with Next.js 14 (App Router) with TypeScript and Framer Motion for animations. The backend runs on Node.js with Express. Real-time multiplayer functionality is handled by Socket.IO. Authentication uses NextAuth with Google OAuth. The entire stack is optimized for low-latency real-time interaction.",
+    q: 'What technology powers CodeSlayer?',
+    a: "CodeSlayer's frontend is built with Next.js 14 (App Router) with TypeScript and Framer Motion for animations. The backend runs on Node.js with Express. Real-time multiplayer functionality is handled by Socket.IO. Authentication uses NextAuth with Google OAuth. The entire stack is optimized for low-latency real-time interaction.",
   },
   {
     q: 'How long does a typical match last?',
-    a: 'Matches are capped at 15 minutes of active coding time. Total session time including the lobby, role assignment, and any Emergency Meetings typically falls between 15–25 minutes. This makes Devception ideal for quick sessions during breaks or longer play sessions with multiple consecutive matches.',
+    a: 'Matches are capped at 15 minutes of active coding time. Total session time including the lobby, role assignment, and any Emergency Meetings typically falls between 15–25 minutes. This makes CodeSlayer ideal for quick sessions during breaks or longer play sessions with multiple consecutive matches.',
   },
   {
     q: 'Can I spectate a match without playing?',
@@ -68,7 +68,7 @@ const FAQS = [
     a: 'Use the contact form on our Contact page and choose "Bug Report" or "General Question" as the subject. Every message is read by a real person — no auto-replies. Public community channels are planned for after launch.',
   },
   {
-    q: 'Is Devception suitable for team building or educational use?',
+    q: 'Is CodeSlayer suitable for team building or educational use?',
     a: 'That is exactly who we are designing it for. The 15–20 minute match format suits hackathon warm-ups, onboarding ice-breakers, classrooms, and study groups, and the mechanics exercise real skills — reading unfamiliar code, code review, and communicating under pressure. To be clear, this is a new pre-launch project, so we are not claiming any company or school uses it yet.',
   },
   {

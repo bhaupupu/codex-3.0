@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import LegalPageLayout from '@/components/landing/LegalPageLayout';
 
 export const metadata: Metadata = {
-  title: 'Cookie Policy — Devception',
-  description: 'Information about how Devception uses cookies and how you can manage your preferences.',
+  title: 'Cookie Policy — CodeSlayer',
+  description: 'Information about how CodeSlayer uses cookies and how you can manage your preferences.',
 };
 
 export default function CookiePolicyPage() {
@@ -25,7 +25,7 @@ export default function CookiePolicyPage() {
       </p>
 
       <h2>2. Why We Use Cookies</h2>
-      <p>Devception uses cookies for the following purposes:</p>
+      <p>CodeSlayer uses cookies for the following purposes:</p>
       <ul>
         <li><strong>Essential functionality:</strong> To keep you logged in and maintain your session securely</li>
         <li><strong>Security:</strong> To prevent cross-site request forgery (CSRF) attacks</li>
@@ -72,7 +72,7 @@ export default function CookiePolicyPage() {
 
       <h2>3.2 Analytics Cookies</h2>
       <p>
-        We do not currently use any analytics cookies. Devception does not run Google Analytics or any
+        We do not currently use any analytics cookies. CodeSlayer does not run Google Analytics or any
         similar analytics service today — usage information comes only from anonymised server logs. If we
         adopt an analytics service in the future, we will list its cookies here and update the date at the
         top of this policy before it goes live.
@@ -136,7 +136,7 @@ export default function CookiePolicyPage() {
       <p>
         You can control and manage cookies in various ways. Most web browsers automatically accept cookies,
         but you can modify your browser settings to decline cookies if you prefer. Please note that disabling
-        cookies may affect the functionality of Devception — in particular, you will not be able to log in
+        cookies may affect the functionality of CodeSlayer — in particular, you will not be able to log in
         without essential cookies enabled.
       </p>
       <p>

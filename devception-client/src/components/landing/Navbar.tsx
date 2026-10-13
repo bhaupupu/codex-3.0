@@ -98,7 +98,7 @@ export default function Navbar() {
             }}
           >
             <span style={{ color: '#2563eb' }}>&gt;</span>
-            DEVCEPTION
+            CODESLAYER
           </Link>
 
           {/* CENTER LINKS (desktop) */}

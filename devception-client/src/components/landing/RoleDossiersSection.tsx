@@ -17,7 +17,7 @@ const DOSSIERS = [
       },
       {
         title: 'STRATEGIC OBJECTIVES',
-        content: `Winning as a developer requires more than just coding skill. You must remain vigilant. Observe your teammates' behavior. When someone edits a working function incorrectly, note it. When the progress bar drops unexpectedly, investigate. Watch for players who appear active but contribute nothing meaningful. Look for suspicious idle periods, strange code additions, or unusual hesitation before critical actions. The best developers in Devception are those who can code and observe simultaneously — maintaining their own output while passively tracking anomalous behavior across the team.`,
+        content: `Winning as a developer requires more than just coding skill. You must remain vigilant. Observe your teammates' behavior. When someone edits a working function incorrectly, note it. When the progress bar drops unexpectedly, investigate. Watch for players who appear active but contribute nothing meaningful. Look for suspicious idle periods, strange code additions, or unusual hesitation before critical actions. The best developers in CodeSlayer are those who can code and observe simultaneously — maintaining their own output while passively tracking anomalous behavior across the team.`,
       },
       {
         title: 'WIN CONDITIONS',
@@ -39,7 +39,7 @@ const DOSSIERS = [
       },
       {
         title: 'DECEPTION TACTICS',
-        content: `The art of being an imposter in Devception is social, not technical. You must maintain the illusion of participation. Type in the editor, even if what you write is slightly wrong. Participate in chat. Agree with other players' observations. When someone calls an Emergency Meeting, immediately accuse someone else — ideally a player who has been quiet or less active. Redirect suspicion. Use the chat to gaslight. "I saw Player D change that function twice" is far more effective than silence. Create doubt. The moment two developers disagree about who to vote for, you've already won that round.`,
+        content: `The art of being an imposter in CodeSlayer is social, not technical. You must maintain the illusion of participation. Type in the editor, even if what you write is slightly wrong. Participate in chat. Agree with other players' observations. When someone calls an Emergency Meeting, immediately accuse someone else — ideally a player who has been quiet or less active. Redirect suspicion. Use the chat to gaslight. "I saw Player D change that function twice" is far more effective than silence. Create doubt. The moment two developers disagree about who to vote for, you've already won that round.`,
       },
       {
         title: 'WIN CONDITIONS',
@@ -259,7 +259,7 @@ export default function RoleDossiersSection() {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  DEVCEPTION INTEL BUREAU · EYES ONLY · DCPTN-{dossier.id}
+                  CODESLAYER INTEL BUREAU · EYES ONLY · CDSLYR-{dossier.id}
                 </div>
               </div>
             </div>

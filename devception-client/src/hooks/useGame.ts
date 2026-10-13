@@ -93,13 +93,17 @@ export function useGameEvents(socket: AppSocket | null, roomCode: string) {
     socket.on('chat:system', (msg) => chatStore.addSystemMessage(msg));
 
     // Meeting events
-    socket.on('meeting:start', ({ meetingId, calledBy, calledByName, discussionMs, votingMs }) => {
+    socket.on('meeting:start', ({ meetingId, calledBy, calledByName, discussionMs, votingMs, evidence }) => {
       meetingStore.startMeeting({
         meetingId, calledBy, calledByName,
         discussionMs: discussionMs ?? 60000,
         votingMs: votingMs ?? 30000,
+        evidence: evidence ?? [],
       });
       gameStore.updatePhase('meeting');
+    });
+    socket.on('meeting:evidence', ({ evidence }) => {
+      meetingStore.setEvidence(evidence ?? []);
     });
     socket.on('meeting:phase-change', ({ phase }) => {
       meetingStore.setPhase(phase as 'discussion' | 'voting' | 'results');
